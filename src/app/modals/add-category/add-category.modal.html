@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ category ? 'Editar Categoría' : 'Nueva Categoría' }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="confirm()" [disabled]="!isValid" strong>
+        {{ category ? 'Guardar' : 'Crear' }}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list lines="full">
+    <ion-item>
+      <ion-label position="stacked">Nombre *</ion-label>
+      <ion-input [(ngModel)]="name" placeholder="Nombre de la categoría" maxlength="30" autofocus></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Color</ion-label>
+      <div class="color-picker">
+        <div
+          *ngFor="let c of colors"
+          class="color-dot"
+          [style.background]="c"
+          [class.selected]="color === c"
+          (click)="color = c"
+        ></div>
+      </div>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Ícono</ion-label>
+      <ion-select [(ngModel)]="icon" interface="action-sheet">
+        <ion-select-option *ngFor="let i of icons" [value]="i">{{ i }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <div class="preview" [style.border-color]="color">
+    <ion-icon [name]="icon" [style.color]="color" size="large"></ion-icon>
+    <span [style.color]="color">{{ name || 'Vista previa' }}</span>
+  </div>
+</ion-content>
