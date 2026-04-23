@@ -34,4 +34,18 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+ion-content {
+  --background: #F4F5FB;
+}
+
+ion-toolbar {
+  --background: #F4F5FB;
+  --border-width: 0 !important;
+  box-shadow: none !important;
+}

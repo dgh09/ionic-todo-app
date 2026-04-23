@@ -2,18 +2,17 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonFab, IonFabButton,
-  IonIcon, IonList, IonItem, IonLabel, IonCheckbox, IonBadge,
-  IonChip, IonButton, IonButtons, IonSegment, IonSegmentButton,
-  IonItemSliding, IonItemOptions, IonItemOption, IonCard, IonCardContent,
-  IonProgressBar, IonNote, IonText, IonSearchbar, IonRouterLink,
+  IonHeader, IonToolbar, IonContent, IonIcon,
   ModalController, AlertController, ToastController
 } from '@ionic/angular/standalone';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
 import {
-  add, trash, create, settingsOutline, checkmarkCircle,
-  ellipseOutline, flagOutline, listOutline, searchOutline
+  add, trashOutline, createOutline, gridOutline, checkmark,
+  listOutline, appsOutline, searchOutline, closeCircle,
+  rocketOutline, checkmarkCircle, logOutOutline,
+  folder, briefcase, person, cart, home, book, heart, star,
+  musicalNotes, airplane, car, leaf, pizza
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -22,6 +21,7 @@ import { Category } from '../models/category.model';
 import { TaskService } from '../services/task.service';
 import { CategoryService } from '../services/category.service';
 import { RemoteConfigService } from '../services/remote-config.service';
+import { AuthService } from '../services/auth.service';
 import { AddTaskModal } from '../modals/add-task/add-task.modal';
 
 @Component({
@@ -30,12 +30,8 @@ import { AddTaskModal } from '../modals/add-task/add-task.modal';
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, FormsModule, RouterLink, IonRouterLink,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonFab, IonFabButton,
-    IonIcon, IonList, IonItem, IonLabel, IonCheckbox, IonBadge,
-    IonChip, IonButton, IonButtons, IonSegment, IonSegmentButton,
-    IonItemSliding, IonItemOptions, IonItemOption, IonCard, IonCardContent,
-    IonProgressBar, IonNote, IonText, IonSearchbar,
+    CommonModule, FormsModule, RouterLink,
+    IonHeader, IonToolbar, IonContent, IonIcon,
   ],
 })
 export class HomePage implements OnInit, OnDestroy {
@@ -47,6 +43,7 @@ export class HomePage implements OnInit, OnDestroy {
   searchQuery = '';
   showPriority = true;
   showStatsBanner = true;
+  userName = '';
 
   private destroy$ = new Subject<void>();
 
@@ -54,14 +51,28 @@ export class HomePage implements OnInit, OnDestroy {
     private taskService: TaskService,
     private categoryService: CategoryService,
     private remoteConfig: RemoteConfigService,
+    private authService: AuthService,
+    private router: Router,
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
   ) {
-    addIcons({ add, trash, create, settingsOutline, checkmarkCircle, ellipseOutline, flagOutline, listOutline, searchOutline });
+    addIcons({
+      add, trashOutline, createOutline, gridOutline, checkmark,
+      listOutline, appsOutline, searchOutline, closeCircle,
+      rocketOutline, checkmarkCircle, logOutOutline,
+      folder, briefcase, person, cart, home, book, heart, star,
+      musicalNotes, airplane, car, leaf, pizza
+    });
   }
 
   ngOnInit(): void {
+    this.authService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.userName = user?.displayName || user?.email?.split('@')[0] || 'allí';
+      });
+
     this.taskService.filteredTasks$
       .pipe(takeUntil(this.destroy$))
       .subscribe(tasks => {
@@ -79,6 +90,25 @@ export class HomePage implements OnInit, OnDestroy {
         this.showPriority = flags['show_priority'] as boolean;
         this.showStatsBanner = flags['show_stats_banner'] as boolean;
       });
+  }
+
+  async logout(): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      header: 'Cerrar sesión',
+      message: '¿Seguro que quieres salir?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Salir',
+          role: 'destructive',
+          handler: async () => {
+            await this.authService.signOut();
+            this.router.navigate(['/'], { replaceUrl: true });
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
   ngOnDestroy(): void {
@@ -105,9 +135,13 @@ export class HomePage implements OnInit, OnDestroy {
     return this.categories.find(c => c.id === id);
   }
 
-  getPriorityColor(priority: string): string {
-    const map: Record<string, string> = { high: 'danger', medium: 'warning', low: 'success' };
-    return map[priority] ?? 'medium';
+  getPriorityHex(priority: string): string {
+    const map: Record<string, string> = {
+      high: '#FF4757',
+      medium: '#F5A623',
+      low: '#2EC27E',
+    };
+    return map[priority] ?? '#e8e9f0';
   }
 
   getPriorityLabel(priority: string): string {
@@ -120,9 +154,9 @@ export class HomePage implements OnInit, OnDestroy {
     this.taskService.setFilterCategory(id);
   }
 
-  onStatusChange(event: CustomEvent): void {
-    this.filterStatus = event.detail.value;
-    this.taskService.setFilterStatus(this.filterStatus);
+  setStatus(status: 'all' | 'active' | 'completed'): void {
+    this.filterStatus = status;
+    this.taskService.setFilterStatus(status);
   }
 
   async openAddTask(): Promise<void> {
@@ -136,12 +170,11 @@ export class HomePage implements OnInit, OnDestroy {
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm' && data) {
       this.taskService.add({ ...data, completed: false });
-      this.showToast('Tarea agregada');
+      this.showToast('Tarea agregada ✓');
     }
   }
 
-  async openEditTask(task: Task, sliding: IonItemSliding): Promise<void> {
-    await sliding.close();
+  async openEditTaskCard(task: Task): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: AddTaskModal,
       componentProps: { task, showPriority: this.showPriority },
@@ -152,12 +185,11 @@ export class HomePage implements OnInit, OnDestroy {
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm' && data) {
       this.taskService.update(task.id, data);
-      this.showToast('Tarea actualizada');
+      this.showToast('Tarea actualizada ✓');
     }
   }
 
-  async confirmDelete(task: Task, sliding: IonItemSliding): Promise<void> {
-    await sliding.close();
+  async deleteTask(task: Task): Promise<void> {
     const alert = await this.alertCtrl.create({
       header: 'Eliminar tarea',
       message: `¿Eliminar "${task.title}"?`,
@@ -183,7 +215,7 @@ export class HomePage implements OnInit, OnDestroy {
   private async showToast(message: string): Promise<void> {
     const toast = await this.toastCtrl.create({
       message,
-      duration: 1500,
+      duration: 1800,
       position: 'bottom',
       color: 'dark',
     });

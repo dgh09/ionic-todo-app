@@ -1,11 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
-  IonContent, IonList, IonItem, IonLabel, IonInput, IonTextarea,
-  IonSelect, IonSelectOption, IonNote, ModalController
-} from '@ionic/angular/standalone';
+import { IonContent, IonIcon, ModalController } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { close, add, checkmark } from 'ionicons/icons';
 import { Task } from '../../models/task.model';
 import { Category } from '../../models/category.model';
 import { CategoryService } from '../../services/category.service';
@@ -13,13 +11,10 @@ import { CategoryService } from '../../services/category.service';
 @Component({
   selector: 'app-add-task-modal',
   templateUrl: './add-task.modal.html',
+  styleUrls: ['./add-task.modal.scss'],
+  encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [
-    CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
-    IonContent, IonList, IonItem, IonLabel, IonInput, IonTextarea,
-    IonSelect, IonSelectOption, IonNote
-  ],
+  imports: [CommonModule, FormsModule, IonContent, IonIcon],
 })
 export class AddTaskModal implements OnInit {
   @Input() task?: Task;
@@ -34,15 +29,17 @@ export class AddTaskModal implements OnInit {
   constructor(
     private modalCtrl: ModalController,
     private categoryService: CategoryService
-  ) {}
+  ) {
+    addIcons({ close, add, checkmark });
+  }
 
   ngOnInit(): void {
     this.categories = this.categoryService.getAll();
     if (this.task) {
-      this.title = this.task.title;
+      this.title       = this.task.title;
       this.description = this.task.description ?? '';
-      this.categoryId = this.task.categoryId;
-      this.priority = this.task.priority;
+      this.categoryId  = this.task.categoryId;
+      this.priority    = this.task.priority;
     }
   }
 

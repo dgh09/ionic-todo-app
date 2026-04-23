@@ -1,0 +1,128 @@
+<ion-content [fullscreen]="true">
+  <div class="login-wrapper">
+
+    <!-- Fondo con blobs -->
+    <div class="bg">
+      <div class="blob b1"></div>
+      <div class="blob b2"></div>
+      <div class="blob b3"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="top-bar">
+      <button class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+      <h1 class="app-logo">Tu<span>dudu</span></h1>
+    </div>
+
+    <!-- Toggle Login / Registro -->
+    <div class="mode-toggle">
+      <button
+        class="mode-tab"
+        [class.active]="mode === 'login'"
+        (click)="setMode('login')"
+      >Iniciar sesión</button>
+      <button
+        class="mode-tab"
+        [class.active]="mode === 'register'"
+        (click)="setMode('register')"
+      >Crear cuenta</button>
+    </div>
+
+    <!-- Subtítulo -->
+    <p class="form-subtitle">
+      {{ mode === 'login' ? 'Accede a tus tareas donde las dejaste' : 'Comienza gratis, sin tarjeta' }}
+    </p>
+
+    <!-- Formulario -->
+    <div class="form-body">
+
+      <!-- Error -->
+      <div class="error-banner" *ngIf="errorMsg">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span>{{ errorMsg }}</span>
+      </div>
+
+      <!-- Nombre (solo en registro) -->
+      <div class="input-group" *ngIf="mode === 'register'">
+        <label class="input-label">Nombre</label>
+        <div class="input-wrap">
+          <ion-icon name="person-outline" class="input-icon"></ion-icon>
+          <input
+            class="field"
+            type="text"
+            [(ngModel)]="name"
+            placeholder="¿Cómo te llamas?"
+            autocapitalize="words"
+            [disabled]="loading"
+          />
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="input-group">
+        <label class="input-label">Correo electrónico</label>
+        <div class="input-wrap">
+          <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+          <input
+            class="field"
+            type="email"
+            [(ngModel)]="email"
+            placeholder="tu@email.com"
+            autocomplete="email"
+            autocapitalize="none"
+            [disabled]="loading"
+          />
+        </div>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="input-group">
+        <label class="input-label">Contraseña</label>
+        <div class="input-wrap">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <input
+            class="field"
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            placeholder="••••••••"
+            [attr.autocomplete]="mode === 'login' ? 'current-password' : 'new-password'"
+            [disabled]="loading"
+          />
+          <button class="toggle-pw" (click)="showPassword = !showPassword" type="button">
+            <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </button>
+        </div>
+        <p class="hint" *ngIf="mode === 'register'">Mínimo 6 caracteres</p>
+      </div>
+
+      <!-- CTA principal -->
+      <button
+        class="btn-primary"
+        [class.loading]="loading"
+        (click)="submit()"
+        [disabled]="loading"
+      >
+        <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+        <span *ngIf="!loading">
+          {{ mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta' }}
+        </span>
+      </button>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="form-footer">
+      <p class="footer-text" *ngIf="mode === 'login'">
+        ¿No tienes cuenta?
+        <button class="link-btn" (click)="setMode('register')">Regístrate gratis</button>
+      </p>
+      <p class="footer-text" *ngIf="mode === 'register'">
+        ¿Ya tienes cuenta?
+        <button class="link-btn" (click)="setMode('login')">Inicia sesión</button>
+      </p>
+    </div>
+
+  </div>
+</ion-content>

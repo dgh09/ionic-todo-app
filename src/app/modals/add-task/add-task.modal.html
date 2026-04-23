@@ -1,56 +1,78 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>{{ task ? 'Editar Tarea' : 'Nueva Tarea' }}</ion-title>
-    <ion-buttons slot="start">
-      <ion-button (click)="cancel()">Cancelar</ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button (click)="confirm()" [disabled]="!isValid" strong>
-        {{ task ? 'Guardar' : 'Agregar' }}
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <div class="atm-wrap">
 
-<ion-content class="ion-padding">
-  <ion-list lines="full">
-    <ion-item>
-      <ion-label position="stacked">Título *</ion-label>
-      <ion-input
+    <div class="atm-handle"></div>
+
+    <div class="atm-header">
+      <h2 class="atm-title">{{ task ? 'Editar tarea' : 'Nueva tarea' }}</h2>
+      <button class="atm-close" (click)="cancel()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+
+    <div class="atm-field">
+      <input
+        class="atm-input"
         [(ngModel)]="title"
         placeholder="¿Qué necesitas hacer?"
         maxlength="100"
         autofocus
-      ></ion-input>
-    </ion-item>
+      />
+    </div>
 
-    <ion-item>
-      <ion-label position="stacked">Descripción</ion-label>
-      <ion-textarea
+    <div class="atm-field">
+      <textarea
+        class="atm-textarea"
         [(ngModel)]="description"
-        placeholder="Detalles opcionales..."
-        rows="3"
+        placeholder="Añade una descripción..."
         maxlength="500"
-      ></ion-textarea>
-    </ion-item>
+        rows="2"
+      ></textarea>
+    </div>
 
-    <ion-item>
-      <ion-label position="stacked">Categoría</ion-label>
-      <ion-select [(ngModel)]="categoryId" placeholder="Sin categoría" interface="action-sheet">
-        <ion-select-option [value]="null">Sin categoría</ion-select-option>
-        <ion-select-option *ngFor="let cat of categories" [value]="cat.id">
-          {{ cat.name }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
+    <p class="atm-label">Categoría</p>
+    <div class="atm-cats">
+      <button
+        class="atm-cat-pill"
+        [class.atm-cat-active]="categoryId === null"
+        (click)="categoryId = null"
+      >Sin categoría</button>
+      <button
+        *ngFor="let cat of categories"
+        class="atm-cat-pill"
+        [class.atm-cat-active]="categoryId === cat.id"
+        [style.--cat-color]="cat.color"
+        [style.--cat-bg]="cat.color + '22'"
+        (click)="categoryId = cat.id"
+      >
+        <ion-icon [name]="cat.icon"></ion-icon>
+        {{ cat.name }}
+      </button>
+    </div>
 
-    <ion-item *ngIf="showPriority">
-      <ion-label position="stacked">Prioridad</ion-label>
-      <ion-select [(ngModel)]="priority" interface="action-sheet">
-        <ion-select-option value="low">Baja</ion-select-option>
-        <ion-select-option value="medium">Media</ion-select-option>
-        <ion-select-option value="high">Alta</ion-select-option>
-      </ion-select>
-    </ion-item>
-  </ion-list>
+    <ng-container *ngIf="showPriority">
+      <p class="atm-label">Prioridad</p>
+      <div class="atm-priority">
+        <button class="atm-pri-btn pri-low"    [class.atm-pri-active]="priority === 'low'"    (click)="priority = 'low'">
+          <span class="atm-dot"></span> Baja
+        </button>
+        <button class="atm-pri-btn pri-medium" [class.atm-pri-active]="priority === 'medium'" (click)="priority = 'medium'">
+          <span class="atm-dot"></span> Media
+        </button>
+        <button class="atm-pri-btn pri-high"   [class.atm-pri-active]="priority === 'high'"   (click)="priority = 'high'">
+          <span class="atm-dot"></span> Alta
+        </button>
+      </div>
+    </ng-container>
+
+    <button
+      class="atm-submit"
+      [class.atm-disabled]="!isValid"
+      (click)="confirm()"
+    >
+      <ion-icon [name]="task ? 'checkmark' : 'add'"></ion-icon>
+      {{ task ? 'Guardar cambios' : 'Agregar tarea' }}
+    </button>
+
+  </div>
 </ion-content>

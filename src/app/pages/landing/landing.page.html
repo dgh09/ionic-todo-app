@@ -1,0 +1,80 @@
+<ion-content [fullscreen]="true">
+  <div class="onboarding">
+
+    <!-- Fondo con blobs -->
+    <div class="bg">
+      <div class="blob b1"></div>
+      <div class="blob b2"></div>
+      <div class="blob b3"></div>
+    </div>
+
+    <!-- Slides de onboarding -->
+    <div class="slides" [style.transform]="'translateX(calc(-' + currentSlide + ' * 100vw))'">
+
+      <!-- Slide 1 -->
+      <div class="slide">
+        <div class="slide-visual">
+          <div class="icon-circle">
+            <ion-icon name="rocket-outline"></ion-icon>
+          </div>
+        </div>
+        <h1 class="app-logo">Tu<span>dudu</span></h1>
+        <p class="slide-title">Tu día, bajo control</p>
+        <p class="slide-desc">Organiza tareas, proyectos y metas en un solo lugar. Simple y sin distracciones.</p>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="slide">
+        <div class="slide-visual">
+          <div class="icon-circle teal">
+            <ion-icon name="layers-outline"></ion-icon>
+          </div>
+        </div>
+        <h1 class="app-logo">Tu<span>dudu</span></h1>
+        <p class="slide-title">Todo categorizado</p>
+        <p class="slide-desc">Personal, trabajo, compras — cada cosa en su lugar. Filtra en un toque.</p>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="slide">
+        <div class="slide-visual">
+          <div class="icon-circle pink">
+            <ion-icon name="trophy-outline"></ion-icon>
+          </div>
+        </div>
+        <h1 class="app-logo">Tu<span>dudu</span></h1>
+        <p class="slide-title">Celebra cada logro</p>
+        <p class="slide-desc">Visualiza tu progreso diario y mantén la motivación para cumplir tus metas.</p>
+      </div>
+
+    </div>
+
+    <!-- Dots indicadores -->
+    <div class="dots">
+      <span
+        *ngFor="let s of [0,1,2]"
+        class="dot"
+        [class.active]="currentSlide === s"
+        (click)="goToSlide(s)"
+      ></span>
+    </div>
+
+    <!-- Botones -->
+    <div class="actions" *ngIf="currentSlide < 2">
+      <button class="btn-primary" (click)="nextSlide()">
+        Siguiente
+        <ion-icon name="arrow-forward"></ion-icon>
+      </button>
+      <button class="btn-ghost" (click)="skipToEnd()">Saltar</button>
+    </div>
+
+    <div class="actions" *ngIf="currentSlide === 2">
+      <button class="btn-primary" (click)="goToApp()">
+        Comenzar — Es gratis
+        <ion-icon name="arrow-forward"></ion-icon>
+      </button>
+      <button class="btn-ghost" (click)="goToLogin()">Ya tengo una cuenta</button>
+    </div>
+
+  </div>
+</ion-content>

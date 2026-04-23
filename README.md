@@ -1,45 +1,59 @@
 # TodoApp — Ionic + Angular
 
-Aplicación de lista de tareas (To-Do) con categorías, Firebase Remote Config y soporte para Android e iOS.
+Aplicación móvil de lista de tareas con categorías, autenticación, base de datos en la nube y feature flags via Firebase Remote Config.
 
-## Stack
+---
 
-- **Ionic 7** + **Angular 18** (Standalone Components)
-- **Capacitor** para compilación nativa (Android / iOS)
-- **Firebase Remote Config** para feature flags
-- **localStorage** para persistencia de datos
+## Stack tecnológico
+
+| Tecnología | Uso |
+|---|---|
+| **Ionic 8** + **Angular 20** | Framework UI + framework web |
+| **Standalone Components** | Arquitectura sin NgModules |
+| **Cordova** | Compilación nativa Android / iOS |
+| **Firebase Auth** | Autenticación con email y contraseña |
+| **Firebase Firestore** | Base de datos en la nube por usuario |
+| **Firebase Remote Config** | Feature flags sin redesplegar la app |
+| **RxJS** | Estado reactivo con BehaviorSubject + combineLatest |
 
 ---
 
 ## Funcionalidades
 
 | Función | Descripción |
-|--------|-------------|
-| Tareas | Agregar, editar, marcar como completada, eliminar |
+|---|---|
+| Onboarding | Pantalla de bienvenida con 3 slides |
+| Registro / Login | Crear cuenta e iniciar sesión con email y contraseña |
+| Logout | Cierra sesión y limpia los datos locales |
+| Tareas | Agregar, editar, completar y eliminar tareas |
 | Categorías | Crear, editar y eliminar categorías con color e ícono |
-| Filtrado | Por categoría y por estado (activas / completadas) |
+| Filtrado | Por categoría y por estado (todas / activas / completadas) |
 | Búsqueda | Búsqueda en tiempo real por título o descripción |
-| Prioridad | Alta / Media / Baja (controlado por Remote Config) |
-| Stats | Banner de progreso con contador (controlado por Remote Config) |
-| Remote Config | Feature flags via Firebase sin redesplegar la app |
+| Prioridad | Alta / Media / Baja (activable via Remote Config) |
+| Stats | Banner de progreso con contadores (activable via Remote Config) |
+| Datos por usuario | Cada usuario ve únicamente sus propias tareas y categorías |
+| Offline | Firestore cachea datos localmente sin conexión |
 
 ---
 
 ## Requisitos previos
 
 ```bash
-node >= 18
+Node >= 18
 npm >= 9
-ionic CLI: npm install -g @ionic/cli
+@ionic/cli        →  npm install -g @ionic/cli
+cordova           →  npm install -g cordova
+Android Studio    →  Para compilar APK (Android)
+Xcode + macOS     →  Para compilar IPA (iOS)
 ```
 
 ---
 
-## Instalación y ejecución
+## Instalación y ejecución local
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/TU_USUARIO/ionic-todo-app.git
+git clone https://github.com/danielgonzalez2709/ionic-todo-app.git
 cd ionic-todo-app
 
 # 2. Instalar dependencias
@@ -49,95 +63,115 @@ npm install
 ionic serve
 ```
 
+La app estará disponible en `http://localhost:8100`.
+
 ---
 
-## Configurar Firebase
+## Configuración de Firebase
 
 1. Ve a [Firebase Console](https://console.firebase.google.com/) y crea un proyecto.
-2. Habilita **Remote Config** en tu proyecto.
-3. Copia las credenciales en `src/environments/environment.ts`:
+2. Registra una app web y copia las credenciales en `src/environments/environment.ts`:
 
 ```typescript
-firebase: {
-  apiKey: 'TU_API_KEY',
-  authDomain: 'TU_PROYECTO.firebaseapp.com',
-  projectId: 'TU_PROYECTO_ID',
-  storageBucket: 'TU_PROYECTO.appspot.com',
-  messagingSenderId: 'TU_SENDER_ID',
-  appId: 'TU_APP_ID',
-}
+export const environment = {
+  production: false,
+  firebase: {
+    apiKey: 'TU_API_KEY',
+    authDomain: 'TU_PROYECTO.firebaseapp.com',
+    projectId: 'TU_PROYECTO_ID',
+    storageBucket: 'TU_PROYECTO.firebasestorage.app',
+    messagingSenderId: 'TU_SENDER_ID',
+    appId: 'TU_APP_ID',
+  },
+};
 ```
 
-### Feature flags (Remote Config)
+3. Habilita los siguientes servicios en Firebase Console:
 
-| Parámetro | Tipo | Default | Descripción |
-|-----------|------|---------|-------------|
-| `show_priority` | boolean | `true` | Muestra/oculta la prioridad en tareas |
-| `show_stats_banner` | boolean | `true` | Muestra/oculta el banner de estadísticas |
-| `enable_dark_mode_toggle` | boolean | `true` | Activa el botón de modo oscuro |
-| `max_tasks_per_category` | number | `50` | Máximo de tareas por categoría |
+| Servicio | Configuración |
+|---|---|
+| **Authentication** | Habilitar proveedor Email/Password |
+| **Firestore Database** | Crear base de datos en modo Test |
+| **Remote Config** | Crear los parámetros descritos abajo |
+
+### Feature flags — Remote Config
+
+| Parámetro | Tipo | Default | Efecto |
+|---|---|---|---|
+| `show_priority` | Boolean | `true` | Muestra u oculta la etiqueta de prioridad en cada tarea |
+| `show_stats_banner` | Boolean | `true` | Muestra u oculta el banner de estadísticas en home |
+
+> Si Firebase no está configurado, la app funciona en **modo demo** con los valores por defecto.
 
 ---
 
-## Compilar para Android
+## Estructura de datos en Firestore
 
-```bash
-# 1. Build web
-ionic build
+Cada usuario tiene su propia colección de datos:
 
-# 2. Agregar plataforma Android (solo primera vez)
-npx cap add android
-
-# 3. Sincronizar cambios
-npx cap sync android
-
-# 4. Abrir en Android Studio
-npx cap open android
+```
+users/
+  {uid}/
+    tasks/
+      {taskId}  →  { title, description, completed, categoryId, priority, createdAt }
+    categories/
+      {categoryId}  →  { name, color, icon }
 ```
 
-En Android Studio: **Build → Generate Signed Bundle / APK → APK**
+Al registrarse por primera vez, se crean automáticamente 3 categorías por defecto: Personal, Trabajo y Compras.
 
-### Requisitos
+---
+
+## Compilar para Android (APK)
+
+```bash
+# 1. Build del proyecto web
+npm run build
+
+# 2. Agregar plataforma Android (solo la primera vez)
+npm run cordova:add:android
+
+# 3. Compilar APK en modo debug
+npm run cordova:build:android
+
+# 4. Compilar APK en modo producción
+npm run cordova:build:android:prod
+```
+
+El APK se genera en:
+```
+platforms/android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+### Requisitos Android
 - Android Studio instalado
 - JDK 17+
-- Android SDK (API 21+)
+- Android SDK API 22+
+- Variable `ANDROID_HOME` configurada
 
 ---
 
-## Compilar para iOS
+## Compilar para iOS (IPA)
+
+> Requiere macOS con Xcode instalado.
 
 ```bash
-# 1. Build web
-ionic build
+# 1. Build del proyecto web
+npm run build
 
-# 2. Agregar plataforma iOS (solo primera vez)
-npx cap add ios
+# 2. Agregar plataforma iOS (solo la primera vez)
+npm run cordova:add:ios
 
-# 3. Sincronizar cambios
-npx cap sync ios
-
-# 4. Abrir en Xcode
-npx cap open ios
+# 3. Compilar para iOS
+npm run cordova:build:ios:prod
 ```
 
-En Xcode: **Product → Archive → Distribute App**
+Luego en Xcode: **Product → Archive → Distribute App**
 
-### Requisitos
+### Requisitos iOS
 - macOS con Xcode 14+
-- Apple Developer Account para IPA firmado
+- Apple Developer Account
 - CocoaPods: `sudo gem install cocoapods`
-
----
-
-## Optimizaciones de rendimiento aplicadas
-
-1. **Lazy loading de rutas** — cada página se carga solo cuando se navega a ella
-2. **Standalone components** — eliminan el overhead de NgModules
-3. **TrackBy en *ngFor** — evita re-renderizado innecesario de la lista
-4. **RxJS takeUntil** — limpia subscripciones al destruir componentes
-5. **BehaviorSubject + combineLatest** — filtrado reactivo sin iteraciones manuales
-6. **localStorage** optimizado — un solo write por operación
-7. **Lazy import de Firebase** — Remote Config se carga de forma diferida
 
 ---
 
@@ -146,41 +180,72 @@ En Xcode: **Product → Archive → Distribute App**
 ```
 src/app/
 ├── models/
-│   ├── task.model.ts
-│   └── category.model.ts
+│   ├── task.model.ts          # Interfaz Task
+│   └── category.model.ts      # Interfaz Category
 ├── services/
-│   ├── storage.service.ts
-│   ├── task.service.ts
-│   ├── category.service.ts
-│   └── remote-config.service.ts
-├── home/                    # Página principal (lista de tareas)
+│   ├── auth.service.ts        # Firebase Auth (login, registro, logout)
+│   ├── task.service.ts        # CRUD tareas → Firestore + fallback localStorage
+│   ├── category.service.ts    # CRUD categorías → Firestore + fallback localStorage
+│   ├── remote-config.service.ts  # Feature flags via Firebase
+│   └── storage.service.ts     # Wrapper de localStorage (fallback offline)
 ├── pages/
-│   └── categories/          # Gestión de categorías
+│   ├── landing/               # Onboarding (3 slides)
+│   ├── login/                 # Login y registro dual
+│   └── categories/            # Gestión de categorías
+├── home/                      # Página principal con lista de tareas
 └── modals/
-    ├── add-task/            # Modal para agregar/editar tarea
-    └── add-category/        # Modal para agregar/editar categoría
+    ├── add-task/              # Modal agregar / editar tarea
+    └── add-category/          # Modal agregar / editar categoría
 ```
 
 ---
 
-## Preguntas de la prueba
+## Scripts disponibles
+
+```bash
+npm start                          # Servidor de desarrollo
+npm run build                      # Build de producción
+npm run cordova:add:android        # Agrega plataforma Android
+npm run cordova:add:ios            # Agrega plataforma iOS
+npm run cordova:build:android      # Compila APK debug
+npm run cordova:build:android:prod # Compila APK producción
+npm run cordova:build:ios:prod     # Compila IPA producción
+npm run cordova:run:android        # Ejecuta en emulador/dispositivo Android
+```
+
+---
+
+## Preguntas de la prueba técnica
 
 ### ¿Cuáles fueron los principales desafíos?
 
-- Migrar de NgModules a **Standalone Components** manteniendo la compatibilidad con Ionic
-- Implementar **Firebase Remote Config** de forma condicional (funciona offline con valores por defecto)
-- Diseñar el sistema de filtrado reactivo combinando múltiples observables con `combineLatest`
+- **Migración de Capacitor a Cordova** — el proyecto partía con Capacitor; fue necesario reconfigurar los builders de Angular (`@ionic/angular-toolkit`), crear el `config.xml` y ajustar los scripts de build.
+- **Sincronización de estado con Firestore** — coordinar el ciclo de vida de los listeners `onSnapshot` con el estado de autenticación para evitar lecturas de datos de otros usuarios o listeners huérfanos.
+- **Inicialización asíncrona de Firebase** — Firebase se carga con `import()` dinámico para no bloquear el arranque de la app; los servicios deben funcionar correctamente tanto antes como después de que Firebase esté listo.
+- **Remote Config con fallback offline** — si Firebase no está disponible o las credenciales son placeholder, la app sigue funcionando con valores por defecto sin lanzar errores.
 
-### ¿Qué técnicas de optimización aplicaste?
+### ¿Qué técnicas de optimización de rendimiento aplicaste?
 
-- Lazy loading de módulos y componentes vía `loadComponent`
-- Uso de `trackBy` en listas para evitar re-renders
-- Destrucción correcta de subscripciones con `takeUntil` para prevenir memory leaks
-- Carga diferida de Firebase con `import()` dinámico
+- **Lazy loading de rutas** con `loadComponent` — cada página se descarga solo cuando el usuario navega a ella, reduciendo el bundle inicial.
+- **Standalone Components** — eliminan el overhead de NgModules y permiten tree-shaking más agresivo.
+- **`onSnapshot` de Firestore** — actualización en tiempo real sin polling; Firestore sirve desde caché local offline cuando no hay conexión.
+- **`combineLatest` + `BehaviorSubject`** — el filtrado de tareas es puramente reactivo, sin iteraciones manuales ni re-renders innecesarios.
+- **`takeUntil(destroy$)`** — todas las subscripciones RxJS se limpian al destruir el componente para evitar memory leaks.
+- **Dynamic import de Firebase** — los módulos de Firebase (`firebase/auth`, `firebase/firestore`, `firebase/remote-config`) se importan de forma diferida, reduciendo el tiempo de carga inicial.
+- **Fire-and-forget en escrituras** — las operaciones de escritura en Firestore no bloquean la UI; `onSnapshot` actualiza la lista automáticamente cuando el servidor confirma.
 
-### ¿Cómo aseguraste la calidad del código?
+### ¿Cómo aseguraste la calidad y mantenibilidad del código?
 
-- Separación clara de responsabilidades (Servicios / Páginas / Modales)
-- Tipado estricto con TypeScript
-- Un único punto de acceso al localStorage (`StorageService`)
-- Lógica de negocio en servicios, no en componentes
+- **Separación de responsabilidades** — servicios manejan toda la lógica de negocio y acceso a datos; los componentes solo gestionan la UI.
+- **Tipado estricto con TypeScript** — interfaces `Task`, `Category` y `AuthUser` garantizan consistencia en toda la app.
+- **Fallback en cada capa** — Auth, Firestore y Remote Config degradan graciosamente a modo demo/localStorage si Firebase no está disponible.
+- **Gestión del ciclo de vida de listeners** — `unsubscribeSnapshot` y `authSub` se cancelan correctamente en `ngOnDestroy` para evitar fugas de memoria.
+- **Patrón único de acceso a datos** — toda operación de lectura/escritura pasa por el servicio correspondiente, nunca directamente desde componentes.
+
+---
+
+## Archivos de entrega
+
+- Repositorio: [github.com/danielgonzalez2709/ionic-todo-app](https://github.com/danielgonzalez2709/ionic-todo-app)
+- APK Android: *(adjunto en la entrega)*
+- IPA iOS: *(requiere macOS — documentado en sección de compilación)*

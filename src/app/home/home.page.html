@@ -1,142 +1,162 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-title>Mis Tareas</ion-title>
-    <ion-buttons slot="end">
-      <ion-button routerLink="/categories">
-        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <div class="header-content">
+      <div class="header-left">
+        <p class="header-greeting">Hola, {{ userName }} 👋</p>
+        <h1 class="header-title">Mis Tareas</h1>
+      </div>
+      <div class="header-actions">
+        <button class="header-settings-btn" routerLink="/categories">
+          <ion-icon name="grid-outline"></ion-icon>
+        </button>
+        <button class="header-logout-btn" (click)="logout()">
+          <ion-icon name="log-out-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
 
-  <!-- Stats Banner (controlled by Remote Config flag: show_stats_banner) -->
-  <ion-card class="stats-card" *ngIf="showStatsBanner && stats.total > 0">
-    <ion-card-content>
-      <div class="stats-row">
-        <div class="stat">
-          <span class="stat-number">{{ stats.total }}</span>
-          <span class="stat-label">Total</span>
-        </div>
-        <div class="stat">
-          <span class="stat-number" style="color: var(--ion-color-success)">{{ stats.completed }}</span>
-          <span class="stat-label">Hechas</span>
-        </div>
-        <div class="stat">
-          <span class="stat-number" style="color: var(--ion-color-warning)">{{ stats.active }}</span>
-          <span class="stat-label">Pendientes</span>
-        </div>
+  <!-- Stats Banner -->
+  <div class="stats-banner" *ngIf="showStatsBanner && stats.total > 0">
+    <div class="stats-banner-bg">
+      <div class="stat-item">
+        <span class="stat-value">{{ stats.total }}</span>
+        <span class="stat-label">Totales</span>
       </div>
-      <ion-progress-bar [value]="progress" color="success"></ion-progress-bar>
-      <ion-note>{{ (progress * 100 | number:'1.0-0') }}% completado</ion-note>
-    </ion-card-content>
-  </ion-card>
-
-  <!-- Search -->
-  <ion-searchbar
-    [(ngModel)]="searchQuery"
-    placeholder="Buscar tareas..."
-    animated
-  ></ion-searchbar>
-
-  <!-- Category Filter Chips -->
-  <div class="category-chips">
-    <ion-chip
-      [outline]="selectedCategory !== null"
-      (click)="selectCategory(null)"
-      color="primary"
-    >
-      <ion-icon name="list-outline"></ion-icon>
-      <ion-label>Todas</ion-label>
-    </ion-chip>
-    <ion-chip
-      *ngFor="let cat of categories"
-      [outline]="selectedCategory !== cat.id"
-      (click)="selectCategory(cat.id)"
-      [style.--color]="cat.color"
-      [style.--background]="selectedCategory === cat.id ? cat.color : 'transparent'"
-    >
-      <ion-icon [name]="cat.icon"></ion-icon>
-      <ion-label>{{ cat.name }}</ion-label>
-    </ion-chip>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value success">{{ stats.completed }}</span>
+        <span class="stat-label">Completadas</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value warning">{{ stats.active }}</span>
+        <span class="stat-label">Pendientes</span>
+      </div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="progress * 100"></div>
+      </div>
+      <span class="progress-label">{{ (progress * 100 | number:'1.0-0') }}%</span>
+    </div>
   </div>
 
-  <!-- Status Segment -->
-  <ion-segment [value]="filterStatus" (ionChange)="onStatusChange($any($event))">
-    <ion-segment-button value="all">
-      <ion-label>Todas</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="active">
-      <ion-label>Activas</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="completed">
-      <ion-label>Hechas</ion-label>
-    </ion-segment-button>
-  </ion-segment>
+  <!-- Search -->
+  <div class="search-wrapper">
+    <ion-icon name="search-outline" class="search-icon"></ion-icon>
+    <input
+      class="search-input"
+      [(ngModel)]="searchQuery"
+      placeholder="Buscar tareas..."
+      type="text"
+    />
+    <button *ngIf="searchQuery" class="search-clear" (click)="searchQuery = ''">
+      <ion-icon name="close-circle"></ion-icon>
+    </button>
+  </div>
 
-  <!-- Task List -->
-  <ion-list *ngIf="filteredBySearch.length > 0; else emptyState">
-    <ion-item-sliding *ngFor="let task of filteredBySearch" #sliding>
-      <ion-item [class.completed]="task.completed" lines="full">
-        <ion-checkbox
-          slot="start"
-          [checked]="task.completed"
-          (ionChange)="toggleTask(task)"
-          [color]="task.completed ? 'success' : 'primary'"
-        ></ion-checkbox>
+  <!-- Category Filter Pills -->
+  <div class="category-scroll">
+    <button
+      class="category-pill"
+      [class.active]="selectedCategory === null"
+      (click)="selectCategory(null)"
+    >
+      <ion-icon name="apps-outline"></ion-icon>
+      <span>Todas</span>
+    </button>
+    <button
+      *ngFor="let cat of categories"
+      class="category-pill"
+      [class.active]="selectedCategory === cat.id"
+      [style.--pill-color]="cat.color"
+      (click)="selectCategory(cat.id)"
+    >
+      <ion-icon [name]="cat.icon"></ion-icon>
+      <span>{{ cat.name }}</span>
+    </button>
+  </div>
 
-        <ion-label>
-          <h2 [class.line-through]="task.completed">{{ task.title }}</h2>
-          <p *ngIf="task.description">{{ task.description }}</p>
-          <div class="task-meta">
-            <ion-badge
-              *ngIf="getCategoryById(task.categoryId) as cat"
-              [style.background]="cat.color"
-            >
-              <ion-icon [name]="cat.icon" size="small"></ion-icon>
-              {{ cat.name }}
-            </ion-badge>
-            <!-- Priority badge: controlled by Remote Config flag: show_priority -->
-            <ion-badge
-              *ngIf="showPriority"
-              [color]="getPriorityColor(task.priority)"
-              class="priority-badge"
-            >
-              {{ getPriorityLabel(task.priority) }}
-            </ion-badge>
-          </div>
-        </ion-label>
-      </ion-item>
+  <!-- Status Tabs -->
+  <div class="status-tabs">
+    <button
+      class="status-tab"
+      [class.active]="filterStatus === 'all'"
+      (click)="setStatus('all')"
+    >Todas</button>
+    <button
+      class="status-tab"
+      [class.active]="filterStatus === 'active'"
+      (click)="setStatus('active')"
+    >Activas</button>
+    <button
+      class="status-tab"
+      [class.active]="filterStatus === 'completed'"
+      (click)="setStatus('completed')"
+    >Hechas</button>
+  </div>
 
-      <ion-item-options side="start">
-        <ion-item-option color="primary" (click)="openEditTask(task, sliding)">
-          <ion-icon slot="icon-only" name="create"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
+  <!-- Task Cards -->
+  <div class="task-list" *ngIf="filteredBySearch.length > 0; else emptyState">
+    <div
+      class="task-card"
+      *ngFor="let task of filteredBySearch"
+      [class.task-done]="task.completed"
+      [style.--priority-color]="getPriorityHex(task.priority)"
+    >
+      <button class="task-check" (click)="toggleTask(task)">
+        <div class="check-circle" [class.checked]="task.completed">
+          <ion-icon *ngIf="task.completed" name="checkmark"></ion-icon>
+        </div>
+      </button>
 
-      <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="confirmDelete(task, sliding)">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+      <div class="task-body" (click)="openEditTaskCard(task)">
+        <p class="task-title" [class.done-text]="task.completed">{{ task.title }}</p>
+        <p class="task-desc" *ngIf="task.description">{{ task.description }}</p>
+        <div class="task-tags">
+          <span
+            class="tag cat-tag"
+            *ngIf="getCategoryById(task.categoryId) as cat"
+            [style.background]="cat.color + '22'"
+            [style.color]="cat.color"
+          >
+            <ion-icon [name]="cat.icon"></ion-icon>
+            {{ cat.name }}
+          </span>
+          <span
+            class="tag priority-tag"
+            *ngIf="showPriority"
+            [class]="'priority-' + task.priority"
+          >
+            {{ getPriorityLabel(task.priority) }}
+          </span>
+        </div>
+      </div>
+
+      <button class="task-delete" (click)="deleteTask(task)">
+        <ion-icon name="trash-outline"></ion-icon>
+      </button>
+    </div>
+  </div>
 
   <!-- Empty State -->
   <ng-template #emptyState>
     <div class="empty-state">
-      <ion-icon name="checkmark-circle" color="medium" size="large"></ion-icon>
-      <h3>Sin tareas</h3>
-      <p>Toca el botón <strong>+</strong> para agregar tu primera tarea</p>
+      <div class="empty-illustration">
+        <ion-icon name="rocket-outline"></ion-icon>
+      </div>
+      <h3>Todo al día</h3>
+      <p>Toca <strong>+</strong> para agregar tu primera tarea</p>
     </div>
   </ng-template>
 
   <!-- FAB -->
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="openAddTask()" color="primary">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  <button class="fab-btn" (click)="openAddTask()">
+    <ion-icon name="add"></ion-icon>
+  </button>
 
 </ion-content>

@@ -1,12 +1,12 @@
 export const environment = {
   production: false,
   firebase: {
-    // Replace these values with your Firebase project config
-    apiKey: 'YOUR_API_KEY',
-    authDomain: 'YOUR_PROJECT.firebaseapp.com',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT.appspot.com',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    appId: 'YOUR_APP_ID',
+    apiKey: 'AIzaSyA-qE-2TovPQFclUgR8iNm-ciSIbkp7vmY',
+    authDomain: 'ionic-todo-app-8330a.firebaseapp.com',
+    projectId: 'ionic-todo-app-8330a',
+    storageBucket: 'ionic-todo-app-8330a.firebasestorage.app',
+    messagingSenderId: '932808276703',
+    appId: '1:932808276703:web:8d2cb44d4d549f503e876a',
+    measurementId: 'G-3PRLJ42J8E',
   },
 };
