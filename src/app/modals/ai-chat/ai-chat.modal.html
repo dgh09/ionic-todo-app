@@ -1,0 +1,60 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="chat-toolbar">
+    <div class="chat-header-inner">
+      <div class="chat-header-left">
+        <div class="ai-avatar">
+          <ion-icon name="sparkles"></ion-icon>
+        </div>
+        <div>
+          <p class="chat-title">Asistente IA</p>
+          <p class="chat-subtitle">Gemini 2.0 Flash</p>
+        </div>
+      </div>
+      <button class="close-btn" (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="chat-content">
+  <div class="message-list" #messageList>
+    <div
+      *ngFor="let msg of messages"
+      class="message-wrapper"
+      [class.user-wrapper]="msg.role === 'user'"
+    >
+      <div class="bubble" [class.user-bubble]="msg.role === 'user'" [class.model-bubble]="msg.role === 'model'">
+        {{ msg.text }}
+      </div>
+    </div>
+
+    <div class="message-wrapper" *ngIf="isLoading">
+      <div class="bubble model-bubble typing-bubble">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="chat-input-row">
+    <textarea
+      class="chat-input"
+      [(ngModel)]="inputText"
+      (keydown)="onKeydown($event)"
+      placeholder="Escribe un mensaje..."
+      rows="1"
+      [disabled]="isLoading"
+    ></textarea>
+    <button
+      class="send-btn"
+      (click)="send()"
+      [disabled]="!inputText.trim() || isLoading"
+    >
+      <ion-icon name="send-outline"></ion-icon>
+    </button>
+  </div>
+</ion-footer>

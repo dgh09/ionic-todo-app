@@ -179,9 +179,14 @@
     </div>
   </ng-template>
 
-  <!-- FAB -->
-  <button class="fab-btn" (click)="openAddTask()">
-    <ion-icon name="add"></ion-icon>
-  </button>
+  <!-- FABs -->
+  <div class="fab-group">
+    <button class="fab-btn fab-ai" (click)="openAiChat()">
+      <ion-icon name="sparkles-outline"></ion-icon>
+    </button>
+    <button class="fab-btn" (click)="openAddTask()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </div>
 
 </ion-content>

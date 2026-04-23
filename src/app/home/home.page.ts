@@ -12,7 +12,7 @@ import {
   listOutline, appsOutline, searchOutline, closeCircle,
   rocketOutline, checkmarkCircle, logOutOutline,
   folder, briefcase, person, cart, home, book, heart, star,
-  musicalNotes, airplane, car, leaf, pizza
+  musicalNotes, airplane, car, leaf, pizza, sparklesOutline
 } from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -23,6 +23,7 @@ import { CategoryService } from '../services/category.service';
 import { RemoteConfigService } from '../services/remote-config.service';
 import { AuthService } from '../services/auth.service';
 import { AddTaskModal } from '../modals/add-task/add-task.modal';
+import { AiChatModal } from '../modals/ai-chat/ai-chat.modal';
 
 @Component({
   selector: 'app-home',
@@ -62,7 +63,7 @@ export class HomePage implements OnInit, OnDestroy {
       listOutline, appsOutline, searchOutline, closeCircle,
       rocketOutline, checkmarkCircle, logOutOutline,
       folder, briefcase, person, cart, home, book, heart, star,
-      musicalNotes, airplane, car, leaf, pizza
+      musicalNotes, airplane, car, leaf, pizza, sparklesOutline
     });
   }
 
@@ -181,6 +182,17 @@ export class HomePage implements OnInit, OnDestroy {
   setStatus(status: 'all' | 'active' | 'completed'): void {
     this.filterStatus = status;
     this.taskService.setFilterStatus(status);
+  }
+
+  async openAiChat(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: AiChatModal,
+      componentProps: { categories: this.categories },
+      breakpoints: [0, 1],
+      initialBreakpoint: 1,
+      cssClass: 'ai-chat-modal',
+    });
+    await modal.present();
   }
 
   async openAddTask(): Promise<void> {
