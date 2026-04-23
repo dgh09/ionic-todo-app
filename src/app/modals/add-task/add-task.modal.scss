@@ -142,6 +142,29 @@ app-add-task-modal ion-content {
   &:active { transform: scale(0.95); }
 }
 
+/* ── PRECIO ─────────────────────────────────── */
+.atm-price-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 16px;
+}
+
+.atm-price-prefix {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2dd36f;
+  flex-shrink: 0;
+}
+
+.atm-price-input {
+  padding: 14px 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1A1A2E;
+
+}
+
 /* ── PRIORIDAD ──────────────────────────────── */
 .atm-priority {
   display: flex;

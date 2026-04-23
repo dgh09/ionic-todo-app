@@ -1,14 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem,
-  IonLabel, IonIcon, IonFab, IonFabButton, IonButton, IonButtons,
-  IonBadge, IonBackButton, IonItemSliding, IonItemOptions, IonItemOption,
-  IonAvatar, IonNote,
+  IonHeader, IonToolbar, IonContent, IonIcon,
   ModalController, AlertController, ToastController
 } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { add, trash, create, arrowBack, folderOpen } from 'ionicons/icons';
+import {
+  add, trashOutline, createOutline, arrowBack, folderOpen,
+  folder, briefcase, person, cart, home, book, heart, star,
+  musicalNotes, airplane, car, leaf, pizza
+} from 'ionicons/icons';
 import { Subject, takeUntil } from 'rxjs';
 
 import { Category } from '../../models/category.model';
@@ -23,10 +25,7 @@ import { AddCategoryModal } from '../../modals/add-category/add-category.modal';
   standalone: true,
   imports: [
     CommonModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem,
-    IonLabel, IonIcon, IonFab, IonFabButton, IonButton, IonButtons,
-    IonBadge, IonBackButton, IonItemSliding, IonItemOptions, IonItemOption,
-    IonAvatar, IonNote,
+    IonHeader, IonToolbar, IonContent, IonIcon,
   ],
 })
 export class CategoriesPage implements OnInit, OnDestroy {
@@ -41,8 +40,13 @@ export class CategoriesPage implements OnInit, OnDestroy {
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
+    private router: Router,
   ) {
-    addIcons({ add, trash, create, arrowBack, folderOpen });
+    addIcons({
+      add, trashOutline, createOutline, arrowBack, folderOpen,
+      folder, briefcase, person, cart, home, book, heart, star,
+      musicalNotes, airplane, car, leaf, pizza,
+    });
   }
 
   ngOnInit(): void {
@@ -67,11 +71,19 @@ export class CategoriesPage implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  goBack(): void {
+    this.router.navigate(['/home']);
+  }
+
+  isShoppingCategory(cat: Category): boolean {
+    return cat.type === 'shopping' || cat.id === 'shopping';
+  }
+
   async openAddCategory(): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: AddCategoryModal,
-      breakpoints: [0, 0.6, 1],
-      initialBreakpoint: 0.6,
+      breakpoints: [0, 0.95, 1],
+      initialBreakpoint: 0.95,
     });
     await modal.present();
     const { data, role } = await modal.onWillDismiss();
@@ -81,13 +93,12 @@ export class CategoriesPage implements OnInit, OnDestroy {
     }
   }
 
-  async openEditCategory(cat: Category, sliding: IonItemSliding): Promise<void> {
-    await sliding.close();
+  async openEditCategory(cat: Category): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: AddCategoryModal,
       componentProps: { category: cat },
-      breakpoints: [0, 0.6, 1],
-      initialBreakpoint: 0.6,
+      breakpoints: [0, 0.95, 1],
+      initialBreakpoint: 0.95,
     });
     await modal.present();
     const { data, role } = await modal.onWillDismiss();
@@ -97,8 +108,7 @@ export class CategoriesPage implements OnInit, OnDestroy {
     }
   }
 
-  async confirmDelete(cat: Category, sliding: IonItemSliding): Promise<void> {
-    await sliding.close();
+  async confirmDelete(cat: Category): Promise<void> {
     const count = this.taskCountMap[cat.id] ?? 0;
     const alert = await this.alertCtrl.create({
       header: 'Eliminar categoría',

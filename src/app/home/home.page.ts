@@ -116,6 +116,30 @@ export class HomePage implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  get selectedCategoryObj(): Category | undefined {
+    return this.categories.find(c => c.id === this.selectedCategory);
+  }
+
+  get isShoppingView(): boolean {
+    const cat = this.selectedCategoryObj;
+    return cat?.type === 'shopping' || cat?.id === 'shopping';
+  }
+
+  get budget(): { total: number; spent: number; pending: number } {
+    const priced = this.filteredBySearch.filter(t => t.price != null && t.price > 0);
+    const total   = priced.reduce((s, t) => s + (t.price ?? 0), 0);
+    const spent   = priced.filter(t => t.completed).reduce((s, t) => s + (t.price ?? 0), 0);
+    const pending = priced.filter(t => !t.completed).reduce((s, t) => s + (t.price ?? 0), 0);
+    return { total, spent, pending };
+  }
+
+  formatCOP(value: number | undefined | null): string {
+    if (value == null || isNaN(value)) return '$0';
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0,
+    }).format(value);
+  }
+
   get filteredBySearch(): Task[] {
     if (!this.searchQuery.trim()) return this.tasks;
     const q = this.searchQuery.toLowerCase();

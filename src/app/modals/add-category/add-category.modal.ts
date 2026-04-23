@@ -1,21 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
-  IonContent, IonList, IonItem, IonLabel, IonInput, IonIcon,
-  IonSelect, IonSelectOption, ModalController
-} from '@ionic/angular/standalone';
+import { IonContent, IonIcon, ModalController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  folder, briefcase, person, cart, home, book, heart, star,
+  close, add, checkmark, cart,
+  folder, briefcase, person, home, book, heart, star,
   musicalNotes, airplane, car, leaf, pizza
 } from 'ionicons/icons';
 import { Category } from '../../models/category.model';
 
 export const CATEGORY_COLORS = [
-  '#3880ff', '#eb445a', '#2dd36f', '#ffc409',
-  '#92949c', '#6a64ff', '#ff6b35', '#00b4d8',
+  '#6C63FF', '#eb445a', '#2dd36f', '#ffc409',
+  '#3880ff', '#ff6b35', '#00b4d8', '#92949c',
 ];
 
 export const CATEGORY_ICONS = [
@@ -27,13 +24,9 @@ export const CATEGORY_ICONS = [
 @Component({
   selector: 'app-add-category-modal',
   templateUrl: './add-category.modal.html',
+  encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [
-    CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
-    IonContent, IonList, IonItem, IonLabel, IonInput, IonIcon,
-    IonSelect, IonSelectOption
-  ],
+  imports: [CommonModule, FormsModule, IonContent, IonIcon],
 })
 export class AddCategoryModal implements OnInit {
   @Input() category?: Category;
@@ -41,19 +34,21 @@ export class AddCategoryModal implements OnInit {
   name = '';
   color = CATEGORY_COLORS[0];
   icon = CATEGORY_ICONS[0];
+  isShopping = false;
 
   colors = CATEGORY_COLORS;
   icons = CATEGORY_ICONS;
 
   constructor(private modalCtrl: ModalController) {
-    addIcons({ folder, briefcase, person, cart, home, book, heart, star, musicalNotes, airplane, car, leaf, pizza });
+    addIcons({ close, add, checkmark, cart, folder, briefcase, person, home, book, heart, star, musicalNotes, airplane, car, leaf, pizza });
   }
 
   ngOnInit(): void {
     if (this.category) {
-      this.name = this.category.name;
-      this.color = this.category.color;
-      this.icon = this.category.icon;
+      this.name       = this.category.name;
+      this.color      = this.category.color;
+      this.icon       = this.category.icon;
+      this.isShopping = this.category.type === 'shopping' || this.category.id === 'shopping';
     }
   }
 
@@ -63,7 +58,12 @@ export class AddCategoryModal implements OnInit {
 
   confirm(): void {
     if (!this.isValid) return;
-    this.modalCtrl.dismiss({ name: this.name.trim(), color: this.color, icon: this.icon }, 'confirm');
+    this.modalCtrl.dismiss({
+      name: this.name.trim(),
+      color: this.color,
+      icon: this.icon,
+      type: this.isShopping ? 'shopping' : 'default',
+    }, 'confirm');
   }
 
   cancel(): void {

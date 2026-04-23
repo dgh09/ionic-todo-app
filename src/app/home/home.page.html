@@ -100,6 +100,28 @@
     >Hechas</button>
   </div>
 
+  <!-- Budget Banner (solo en categorías de tipo shopping) -->
+  <div class="budget-banner" *ngIf="isShoppingView && budget.total > 0">
+    <div class="budget-header">
+      <ion-icon name="cart"></ion-icon>
+      <span>Presupuesto estimado</span>
+    </div>
+    <div class="budget-total">{{ formatCOP(budget.total) }}</div>
+    <div class="budget-row">
+      <div class="budget-item">
+        <span class="budget-dot spent"></span>
+        <span class="budget-value">{{ formatCOP(budget.spent) }}</span>
+        <span class="budget-label">Comprado</span>
+      </div>
+      <div class="budget-divider"></div>
+      <div class="budget-item">
+        <span class="budget-dot pending"></span>
+        <span class="budget-value">{{ formatCOP(budget.pending) }}</span>
+        <span class="budget-label">Pendiente</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Task Cards -->
   <div class="task-list" *ngIf="filteredBySearch.length > 0; else emptyState">
     <div
@@ -133,6 +155,9 @@
             [class]="'priority-' + task.priority"
           >
             {{ getPriorityLabel(task.priority) }}
+          </span>
+          <span class="tag price-tag" *ngIf="task.price">
+            {{ formatCOP(task.price) }}
           </span>
         </div>
       </div>

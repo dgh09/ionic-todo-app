@@ -3,4 +3,5 @@ export interface Category {
   name: string;
   color: string;
   icon: string;
+  type?: 'default' | 'shopping';
 }

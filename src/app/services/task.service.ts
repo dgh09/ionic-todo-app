@@ -76,8 +76,9 @@ export class TaskService implements OnDestroy {
     const user = this.authService.getUser();
 
     if (this.db && user) {
+      const payload = JSON.parse(JSON.stringify(newTask));
       import('firebase/firestore').then(({ doc, setDoc }) =>
-        setDoc(doc(this.db, `users/${user.uid}/tasks/${newTask.id}`), newTask)
+        setDoc(doc(this.db, `users/${user.uid}/tasks/${newTask.id}`), payload)
       );
     } else {
       this.tasksSubject.next([...this.tasksSubject.value, newTask]);

@@ -53,7 +53,7 @@ Xcode + macOS     →  Para compilar IPA (iOS)
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/danielgonzalez2709/ionic-todo-app.git
+git clone https://github.com/dgh09/ionic-todo-app.git
 cd ionic-todo-app
 
 # 2. Instalar dependencias
@@ -246,6 +246,6 @@ npm run cordova:run:android        # Ejecuta en emulador/dispositivo Android
 
 ## Archivos de entrega
 
-- Repositorio: [github.com/danielgonzalez2709/ionic-todo-app](https://github.com/danielgonzalez2709/ionic-todo-app)
+- Repositorio: [github.com/dgh09/ionic-todo-app](https://github.com/dgh09/ionic-todo-app)
 - APK Android: *(adjunto en la entrega)*
 - IPA iOS: *(requiere macOS — documentado en sección de compilación)*

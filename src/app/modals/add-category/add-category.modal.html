@@ -1,47 +1,87 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>{{ category ? 'Editar Categoría' : 'Nueva Categoría' }}</ion-title>
-    <ion-buttons slot="start">
-      <ion-button (click)="cancel()">Cancelar</ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button (click)="confirm()" [disabled]="!isValid" strong>
-        {{ category ? 'Guardar' : 'Crear' }}
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <div class="acm-wrap">
 
-<ion-content class="ion-padding">
-  <ion-list lines="full">
-    <ion-item>
-      <ion-label position="stacked">Nombre *</ion-label>
-      <ion-input [(ngModel)]="name" placeholder="Nombre de la categoría" maxlength="30" autofocus></ion-input>
-    </ion-item>
+    <div class="acm-handle"></div>
 
-    <ion-item>
-      <ion-label position="stacked">Color</ion-label>
-      <div class="color-picker">
-        <div
-          *ngFor="let c of colors"
-          class="color-dot"
-          [style.background]="c"
-          [class.selected]="color === c"
-          (click)="color = c"
-        ></div>
+    <div class="acm-header">
+      <h2 class="acm-title">{{ category ? 'Editar categoría' : 'Nueva categoría' }}</h2>
+      <button class="acm-close" (click)="cancel()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Preview -->
+    <div class="acm-preview" [style.background]="color + '18'" [style.border-color]="color + '55'">
+      <div class="acm-preview-icon" [style.background]="color + '28'">
+        <ion-icon [name]="icon" [style.color]="color"></ion-icon>
       </div>
-    </ion-item>
+      <span class="acm-preview-name" [style.color]="color">{{ name || 'Vista previa' }}</span>
+      <span class="acm-preview-badge" *ngIf="isShopping">
+        <ion-icon name="cart"></ion-icon> Compras
+      </span>
+    </div>
 
-    <ion-item>
-      <ion-label position="stacked">Ícono</ion-label>
-      <ion-select [(ngModel)]="icon" interface="action-sheet">
-        <ion-select-option *ngFor="let i of icons" [value]="i">{{ i }}</ion-select-option>
-      </ion-select>
-    </ion-item>
-  </ion-list>
+    <!-- Nombre -->
+    <div class="acm-field">
+      <input
+        class="acm-input"
+        [(ngModel)]="name"
+        placeholder="Nombre de la categoría"
+        maxlength="30"
+        autofocus
+      />
+    </div>
 
-  <div class="preview" [style.border-color]="color">
-    <ion-icon [name]="icon" [style.color]="color" size="large"></ion-icon>
-    <span [style.color]="color">{{ name || 'Vista previa' }}</span>
+    <!-- Color -->
+    <p class="acm-label">Color</p>
+    <div class="acm-colors">
+      <button
+        *ngFor="let c of colors"
+        class="acm-color-btn"
+        [style.background]="c"
+        [class.acm-color-active]="color === c"
+        (click)="color = c"
+      >
+        <ion-icon *ngIf="color === c" name="checkmark"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Ícono -->
+    <p class="acm-label">Ícono</p>
+    <div class="acm-icons">
+      <button
+        *ngFor="let i of icons"
+        class="acm-icon-btn"
+        [class.acm-icon-active]="icon === i"
+        [style.--icon-color]="color"
+        (click)="icon = i"
+      >
+        <ion-icon [name]="i"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Toggle lista de compras -->
+    <div class="acm-toggle-row" (click)="isShopping = !isShopping">
+      <div class="acm-toggle-icon" [style.background]="isShopping ? '#e8faf1' : '#F4F5FB'">
+        <ion-icon name="cart" [style.color]="isShopping ? '#1a7f5a' : '#B0B3C1'"></ion-icon>
+      </div>
+      <div class="acm-toggle-info">
+        <span class="acm-toggle-title">Lista de compras</span>
+        <span class="acm-toggle-sub">Permite agregar precio a cada ítem</span>
+      </div>
+      <div class="acm-switch" [class.acm-switch-on]="isShopping">
+        <div class="acm-switch-thumb"></div>
+      </div>
+    </div>
+
+    <button
+      class="acm-submit"
+      [class.acm-disabled]="!isValid"
+      (click)="confirm()"
+    >
+      <ion-icon [name]="category ? 'checkmark' : 'add'"></ion-icon>
+      {{ category ? 'Guardar cambios' : 'Crear categoría' }}
+    </button>
+
   </div>
 </ion-content>

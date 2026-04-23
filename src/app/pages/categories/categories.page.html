@@ -1,51 +1,58 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" text="Tareas"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Categorías</ion-title>
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <div class="header-content">
+      <button class="header-back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+      <h1 class="header-title">Categorías</h1>
+      <div class="header-spacer"></div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list *ngIf="categories.length > 0; else emptyState">
-    <ion-item-sliding *ngFor="let cat of categories" #sliding>
-      <ion-item lines="full">
-        <ion-avatar slot="start" [style.background]="cat.color + '22'" class="cat-avatar">
-          <ion-icon [name]="cat.icon" [style.color]="cat.color" size="small"></ion-icon>
-        </ion-avatar>
-        <ion-label>
-          <h2>{{ cat.name }}</h2>
-          <ion-note>{{ taskCountMap[cat.id] ?? 0 }} tarea(s)</ion-note>
-        </ion-label>
-        <div slot="end" class="color-dot-sm" [style.background]="cat.color"></div>
-      </ion-item>
+<ion-content [fullscreen]="true">
 
-      <ion-item-options side="start">
-        <ion-item-option color="primary" (click)="openEditCategory(cat, sliding)">
-          <ion-icon slot="icon-only" name="create"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
+  <div class="cat-list" *ngIf="categories.length > 0; else emptyState">
+    <div class="cat-card" *ngFor="let cat of categories">
 
-      <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="confirmDelete(cat, sliding)">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+      <div class="cat-icon-wrap" [style.background]="cat.color + '22'">
+        <ion-icon [name]="cat.icon" [style.color]="cat.color"></ion-icon>
+      </div>
+
+      <div class="cat-info">
+        <div class="cat-name-row">
+          <p class="cat-name">{{ cat.name }}</p>
+          <span class="cat-shopping-badge" *ngIf="isShoppingCategory(cat)">
+            <ion-icon name="cart"></ion-icon>
+          </span>
+        </div>
+        <p class="cat-count">{{ taskCountMap[cat.id] ?? 0 }} tarea(s)</p>
+      </div>
+
+      <div class="cat-actions">
+        <button class="cat-action-btn edit-btn" (click)="openEditCategory(cat)">
+          <ion-icon name="create-outline"></ion-icon>
+        </button>
+        <button class="cat-action-btn delete-btn" (click)="confirmDelete(cat)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <ng-template #emptyState>
     <div class="empty-state">
-      <ion-icon name="folder-open" color="medium"></ion-icon>
+      <div class="empty-illustration">
+        <ion-icon name="folder-open"></ion-icon>
+      </div>
       <h3>Sin categorías</h3>
-      <p>Crea categorías para organizar mejor tus tareas</p>
+      <p>Toca <strong>+</strong> para crear tu primera categoría</p>
     </div>
   </ng-template>
 
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="openAddCategory()" color="primary">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  <button class="fab-btn" (click)="openAddCategory()">
+    <ion-icon name="add"></ion-icon>
+  </button>
+
 </ion-content>

@@ -22,7 +22,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     const firebaseConfigured = environment.firebase.apiKey !== 'YOUR_API_KEY';
-    if (!firebaseConfigured) return;
+    if (!firebaseConfigured) {
+      this.authService.markReady();
+      return;
+    }
 
     import('firebase/app').then(({ initializeApp }) => {
       try {
@@ -33,6 +36,7 @@ export class AppComponent implements OnInit {
         this.categoryService.initialize(app);
       } catch (err) {
         console.warn('Firebase init error:', err);
+        this.authService.markReady();
       }
     });
   }

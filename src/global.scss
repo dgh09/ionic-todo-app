@@ -44,6 +44,8 @@ ion-content {
   --background: #F4F5FB;
 }
 
+@import './app/modals/add-category/add-category.modal';
+
 ion-toolbar {
   --background: #F4F5FB;
   --border-width: 0 !important;

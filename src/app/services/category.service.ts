@@ -7,9 +7,9 @@ import { AuthService } from './auth.service';
 const LS_KEY = 'todo_categories';
 
 const DEFAULT_CATEGORIES: Category[] = [
-  { id: 'personal', name: 'Personal', color: '#3880ff', icon: 'person' },
-  { id: 'work', name: 'Trabajo', color: '#eb445a', icon: 'briefcase' },
-  { id: 'shopping', name: 'Compras', color: '#2dd36f', icon: 'cart' },
+  { id: 'personal', name: 'Personal', color: '#3880ff', icon: 'person', type: 'default' },
+  { id: 'work',     name: 'Trabajo',  color: '#eb445a', icon: 'briefcase', type: 'default' },
+  { id: 'shopping', name: 'Compras',  color: '#2dd36f', icon: 'cart', type: 'shopping' },
 ];
 
 @Injectable({ providedIn: 'root' })
@@ -46,13 +46,12 @@ export class CategoryService implements OnDestroy {
       return;
     }
 
-    const { collection, onSnapshot, doc, setDoc } = await import('firebase/firestore');
+    const { collection, onSnapshot, doc, setDoc, updateDoc } = await import('firebase/firestore');
     const ref = collection(this.db, `users/${uid}/categories`);
 
     this.unsubscribeSnapshot?.();
     this.unsubscribeSnapshot = onSnapshot(ref, async snapshot => {
       if (snapshot.empty) {
-        // Primer acceso: sembrar categorías por defecto
         for (const cat of DEFAULT_CATEGORIES) {
           await setDoc(doc(this.db, `users/${uid}/categories/${cat.id}`), cat);
         }
@@ -60,6 +59,14 @@ export class CategoryService implements OnDestroy {
       }
       const categories = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Category));
       this.categoriesSubject.next(categories);
+
+      // Migra categorías existentes que no tienen el campo type
+      snapshot.docs.forEach(docSnap => {
+        if (!docSnap.data()['type']) {
+          const type = docSnap.id === 'shopping' ? 'shopping' : 'default';
+          updateDoc(doc(this.db, `users/${uid}/categories/${docSnap.id}`), { type }).catch(() => {});
+        }
+      });
     });
   }
 

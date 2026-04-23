@@ -6,4 +6,5 @@ export interface Task {
   categoryId: string | null;
   createdAt: number;
   priority: 'low' | 'medium' | 'high';
+  price?: number;
 }

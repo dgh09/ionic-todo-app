@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, filter } from 'rxjs';
 
 export interface AuthUser {
   uid: string;
@@ -11,7 +11,11 @@ export interface AuthUser {
 export class AuthService {
   private firebaseAuth: any = null;
   private currentUser = new BehaviorSubject<AuthUser | null>(null);
+  private initialized = new BehaviorSubject<boolean>(false);
+
   user$ = this.currentUser.asObservable();
+  /** Emite solo después de que Firebase (o el modo demo) haya resuelto el estado inicial */
+  userReady$ = this.initialized.pipe(filter(ready => ready));
 
   async initialize(firebaseApp: any): Promise<void> {
     try {
@@ -23,10 +27,15 @@ export class AuthService {
             ? { uid: user.uid, email: user.email ?? '', displayName: user.displayName ?? user.email ?? '' }
             : null
         );
+        this.initialized.next(true);
       });
     } catch {
-      // Firebase not available — demo mode stays active
+      this.initialized.next(true);
     }
+  }
+
+  markReady(): void {
+    this.initialized.next(true);
   }
 
   async signIn(email: string, password: string): Promise<void> {

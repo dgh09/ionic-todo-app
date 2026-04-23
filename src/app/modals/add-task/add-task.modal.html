@@ -50,6 +50,21 @@
       </button>
     </div>
 
+    <ng-container *ngIf="isShoppingSelected">
+      <p class="atm-label">Precio estimado (COP)</p>
+      <div class="atm-field atm-price-field">
+        <span class="atm-price-prefix">$</span>
+        <input
+          class="atm-input atm-price-input"
+          type="text"
+          inputmode="numeric"
+          [value]="priceDisplay"
+          (input)="onPriceInput($event)"
+          placeholder="0"
+        />
+      </div>
+    </ng-container>
+
     <ng-container *ngIf="showPriority">
       <p class="atm-label">Prioridad</p>
       <div class="atm-priority">
