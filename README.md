@@ -1,6 +1,6 @@
 # TodoApp — Ionic + Angular
 
-Aplicación móvil de lista de tareas con categorías, autenticación, base de datos en la nube y feature flags via Firebase Remote Config.
+Aplicación móvil de lista de tareas con categorías, autenticación, base de datos en la nube, feature flags via Firebase Remote Config y asistente de IA para crear tareas por lenguaje natural.
 
 ---
 
@@ -15,6 +15,7 @@ Aplicación móvil de lista de tareas con categorías, autenticación, base de d
 | **Firebase Firestore** | Base de datos en la nube por usuario |
 | **Firebase Remote Config** | Feature flags sin redesplegar la app |
 | **RxJS** | Estado reactivo con BehaviorSubject + combineLatest |
+| **Groq API** (Llama 3.3 70B) | Asistente IA para crear tareas por lenguaje natural |
 
 ---
 
@@ -33,6 +34,7 @@ Aplicación móvil de lista de tareas con categorías, autenticación, base de d
 | Stats | Banner de progreso con contadores (activable via Remote Config) |
 | Datos por usuario | Cada usuario ve únicamente sus propias tareas y categorías |
 | Offline | Firestore cachea datos localmente sin conexión |
+| **Asistente IA** | Crea tareas desde lenguaje natural vía chat con Llama 3.3 |
 
 ---
 
@@ -67,16 +69,18 @@ La app estará disponible en `http://localhost:8100`.
 
 ---
 
-## Configuración de Firebase
+## Configuración de variables de entorno
 
-1. Ve a [Firebase Console](https://console.firebase.google.com/) y crea un proyecto.
-2. Registra una app web y copia las credenciales en `src/environments/environment.ts`:
+Los archivos `src/environments/environment.ts` y `src/environments/environment.prod.ts` **no están en el repositorio** (contienen secrets). Debes crearlos manualmente antes de correr la app.
+
+### Plantilla de `src/environments/environment.ts`
 
 ```typescript
 export const environment = {
   production: false,
+  groqApiKey: 'TU_GROQ_API_KEY',
   firebase: {
-    apiKey: 'TU_API_KEY',
+    apiKey: 'TU_FIREBASE_API_KEY',
     authDomain: 'TU_PROYECTO.firebaseapp.com',
     projectId: 'TU_PROYECTO_ID',
     storageBucket: 'TU_PROYECTO.firebasestorage.app',
@@ -86,6 +90,27 @@ export const environment = {
 };
 ```
 
+> Copia el mismo contenido en `environment.prod.ts` cambiando `production: true`.
+
+---
+
+## Configuración de Groq (Asistente IA)
+
+El asistente IA usa [Groq](https://console.groq.com) con el modelo **Llama 3.3 70B** de forma gratuita.
+
+1. Regístrate en **console.groq.com** (puedes usar tu cuenta de Google)
+2. Ve a **API Keys** → **Create API key**
+3. Copia la key generada (empieza con `gsk_...`)
+4. Pégala en el campo `groqApiKey` de tu `environment.ts`
+
+> El free tier de Groq incluye ~6,000 requests/día sin tarjeta de crédito.
+
+---
+
+## Configuración de Firebase
+
+1. Ve a [Firebase Console](https://console.firebase.google.com/) y crea un proyecto.
+2. Registra una app web y copia las credenciales en el campo `firebase` de tu `environment.ts` (ver plantilla arriba).
 3. Habilita los siguientes servicios en Firebase Console:
 
 | Servicio | Configuración |
@@ -183,11 +208,12 @@ src/app/
 │   ├── task.model.ts          # Interfaz Task
 │   └── category.model.ts      # Interfaz Category
 ├── services/
-│   ├── auth.service.ts        # Firebase Auth (login, registro, logout)
-│   ├── task.service.ts        # CRUD tareas → Firestore + fallback localStorage
-│   ├── category.service.ts    # CRUD categorías → Firestore + fallback localStorage
+│   ├── auth.service.ts           # Firebase Auth (login, registro, logout)
+│   ├── task.service.ts           # CRUD tareas → Firestore + fallback localStorage
+│   ├── category.service.ts       # CRUD categorías → Firestore + fallback localStorage
 │   ├── remote-config.service.ts  # Feature flags via Firebase
-│   └── storage.service.ts     # Wrapper de localStorage (fallback offline)
+│   ├── storage.service.ts        # Wrapper de localStorage (fallback offline)
+│   └── ai-agent.service.ts       # Agente IA con Groq API (Llama 3.3)
 ├── pages/
 │   ├── landing/               # Onboarding (3 slides)
 │   ├── login/                 # Login y registro dual
@@ -195,7 +221,8 @@ src/app/
 ├── home/                      # Página principal con lista de tareas
 └── modals/
     ├── add-task/              # Modal agregar / editar tarea
-    └── add-category/          # Modal agregar / editar categoría
+    ├── add-category/          # Modal agregar / editar categoría
+    └── ai-chat/               # Modal del asistente IA
 ```
 
 ---
@@ -223,6 +250,7 @@ npm run cordova:run:android        # Ejecuta en emulador/dispositivo Android
 - **Sincronización de estado con Firestore** — coordinar el ciclo de vida de los listeners `onSnapshot` con el estado de autenticación para evitar lecturas de datos de otros usuarios o listeners huérfanos.
 - **Inicialización asíncrona de Firebase** — Firebase se carga con `import()` dinámico para no bloquear el arranque de la app; los servicios deben funcionar correctamente tanto antes como después de que Firebase esté listo.
 - **Remote Config con fallback offline** — si Firebase no está disponible o las credenciales son placeholder, la app sigue funcionando con valores por defecto sin lanzar errores.
+- **Integración del agente IA** — se evaluaron múltiples proveedores (Gemini, Groq) ante restricciones de cuota. Se optó por una arquitectura basada en JSON estructurado en lugar de function calling para maximizar la compatibilidad con modelos gratuitos.
 
 ### ¿Qué técnicas de optimización de rendimiento aplicaste?
 
