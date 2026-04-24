@@ -94,16 +94,42 @@ export const environment = {
 
 ---
 
-## Configuración de Groq (Asistente IA)
+## Configuración del Asistente IA (Cloud Function)
 
-El asistente IA usa [Groq](https://console.groq.com) con el modelo **Llama 3.3 70B** de forma gratuita.
+La API key de Groq **no vive en el cliente** — está almacenada en Google Secret Manager y se accede desde una Firebase Cloud Function. Esto evita que la key quede expuesta en el APK.
 
-1. Regístrate en **console.groq.com** (puedes usar tu cuenta de Google)
-2. Ve a **API Keys** → **Create API key**
-3. Copia la key generada (empieza con `gsk_...`)
-4. Pégala en el campo `groqApiKey` de tu `environment.ts`
+### 1. Instalar Firebase CLI
 
-> El free tier de Groq incluye ~6,000 requests/día sin tarjeta de crédito.
+```bash
+npm install -g firebase-tools
+firebase login
+```
+
+### 2. Guardar la API key de Groq como secreto
+
+```bash
+# Regístrate en console.groq.com y obtén tu key (empieza con gsk_...)
+firebase functions:secrets:set GROQ_API_KEY
+# Pega la key cuando lo pida
+```
+
+### 3. Instalar dependencias e instalar las Functions
+
+```bash
+cd functions
+npm install
+cd ..
+```
+
+### 4. Desplegar la Cloud Function
+
+```bash
+firebase deploy --only functions
+```
+
+La función `chatWithGroq` quedará disponible en `us-central1` y el app la llamará automáticamente.
+
+> El free tier de Groq incluye ~6,000 requests/día. Firebase Functions tiene 2M invocaciones/mes gratuitas.
 
 ---
 
