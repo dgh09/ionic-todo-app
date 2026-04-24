@@ -96,6 +96,39 @@
   color: var(--ion-text-color, #1a1a2e);
   border-bottom-left-radius: 4px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.bubble-icon {
+  flex-shrink: 0;
+  font-size: 15px;
+  margin-top: 1px;
+}
+
+.bubble-created {
+  border-left: 3px solid #6c63ff;
+
+  .bubble-icon { color: #6c63ff; }
+}
+
+.bubble-completed {
+  border-left: 3px solid #2dd36f;
+
+  .bubble-icon { color: #2dd36f; }
+}
+
+.bubble-deleted {
+  border-left: 3px solid #eb445a;
+
+  .bubble-icon { color: #eb445a; }
+}
+
+.bubble-clarification {
+  border-left: 3px solid #f5a623;
+
+  .bubble-icon { color: #f5a623; }
 }
 
 .user-bubble {

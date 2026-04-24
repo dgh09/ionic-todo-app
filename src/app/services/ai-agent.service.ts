@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Category } from '../models/category.model';
+import { Task } from '../models/task.model';
 
 export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
 }
 
+export type AgentAction = 'chat' | 'create_task' | 'complete_task' | 'delete_task' | 'ask_clarification';
+
 export interface AgentResult {
+  action: AgentAction;
   reply: string;
   taskCreated?: {
     title: string;
@@ -16,6 +20,7 @@ export interface AgentResult {
     priority: 'low' | 'medium' | 'high';
     price?: number;
   };
+  taskTitle?: string;
 }
 
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -27,51 +32,66 @@ export class AiAgentService {
   async sendMessage(
     history: ChatMessage[],
     userMessage: string,
-    categories: Category[]
+    categories: Category[],
+    tasks: Task[]
   ): Promise<AgentResult> {
     const categoryList = categories.length
       ? categories.map(c => `- ${c.name} (id: "${c.id}")`).join('\n')
       : '(sin categorías)';
 
-    const systemPrompt = `Eres un asistente inteligente para una app de lista de tareas. Respondes siempre en español, de forma breve y amigable.
+    const taskList = tasks.length
+      ? tasks.map(t => `- "${t.title}" (completada: ${t.completed ? 'sí' : 'no'})`).join('\n')
+      : '(sin tareas)';
 
-INSTRUCCIÓN CRÍTICA: responde ÚNICAMENTE con un objeto JSON válido. Sin markdown, sin bloques de código, sin texto antes o después del JSON.
+    const systemPrompt = `Eres un asistente inteligente para una app de lista de tareas. Respondes siempre en español y ÚNICAMENTE con un objeto JSON válido. Sin markdown, sin texto antes o después del JSON.
 
-## Esquema de respuesta
+## Acciones disponibles
 
-Cuando el usuario quiere crear una tarea:
-{"action":"create_task","title":"...","description":null,"categoryId":null,"priority":"medium","price":null,"message":"..."}
+Cuando el usuario quiere CREAR una tarea y conoces la prioridad:
+{"action":"create_task","title":"...","description":null,"categoryId":null,"priority":"high|medium|low","price":null,"message":"..."}
 
-Cuando solo quiere conversar o hacer una pregunta:
+Cuando el usuario quiere crear una tarea pero NO especifica prioridad (no dice urgente, importante, puede esperar, etc.):
+{"action":"ask_clarification","message":"Claro, ¿con qué prioridad quieres agregar esta tarea? Alta, media o baja."}
+
+Cuando el usuario quiere MARCAR como completada o pendiente una tarea:
+{"action":"complete_task","taskTitle":"título de la tarea de la lista","message":"..."}
+
+Cuando el usuario quiere ELIMINAR o BORRAR una tarea:
+{"action":"delete_task","taskTitle":"título de la tarea de la lista","message":"..."}
+
+Cuando el usuario quiere conversar o hacer preguntas:
 {"action":"chat","message":"..."}
 
-## Reglas de los campos
-- title: texto claro y conciso, capitalizado. Ej: "Comprar 3 kg de papas"
-- description: detalle adicional si el usuario lo menciona, si no null
-- categoryId: id exacto de la lista de categorías o null si no aplica
-- priority: "high" si es urgente, "low" si no tiene prisa, "medium" en cualquier otro caso
-- price: número sin símbolo de moneda si el usuario menciona un valor, si no null
-- message: confirmación o respuesta amigable, máximo 2 oraciones
+## Regla crítica de prioridad
+- Indicadores de ALTA: "urgente", "importante", "hoy", "ya", "rápido", "prioritario"
+- Indicadores de BAJA: "cuando pueda", "sin prisa", "después", "algún día", "tranquilo"
+- Si el usuario NO menciona ningún indicador → usa ask_clarification. NO inventes prioridad.
 
 ## Categorías disponibles
 ${categoryList}
 
+## Tareas actuales del usuario
+${taskList}
+
 ## Ejemplos
 
-Usuario: "necesito comprar leche y pan"
-{"action":"create_task","title":"Comprar leche y pan","description":null,"categoryId":"shopping","priority":"medium","price":null,"message":"Listo, agregué 'Comprar leche y pan' a tu lista de compras 🛒"}
+Usuario: "agrega llamar al banco"
+{"action":"ask_clarification","message":"Entendido. ¿Con qué prioridad quieres agregar 'Llamar al banco'? Alta, media o baja."}
 
-Usuario: "llama al médico mañana es urgente"
-{"action":"create_task","title":"Llamar al médico","description":"Urgente para mañana","categoryId":null,"priority":"high","price":null,"message":"Anotado como urgente. Recuerda llamar al médico mañana."}
+Usuario: "alta"
+{"action":"create_task","title":"Llamar al banco","description":null,"categoryId":null,"priority":"high","price":null,"message":"Listo, 'Llamar al banco' agregada con prioridad alta ✓"}
 
-Usuario: "tengo que pagar el arriendo, son 800000 pesos"
-{"action":"create_task","title":"Pagar arriendo","description":null,"categoryId":null,"priority":"high","price":800000,"message":"Tarea creada: 'Pagar arriendo' por $800,000."}
+Usuario: "necesito comprar leche urgente"
+{"action":"create_task","title":"Comprar leche","description":null,"categoryId":"shopping","priority":"high","price":null,"message":"Agregada con prioridad alta 🛒"}
 
-Usuario: "hola, cómo funciona esto?"
-{"action":"chat","message":"Hola! Puedo ayudarte a agregar tareas con lenguaje natural. Por ejemplo: 'Comprar pan' o 'Llamar al médico mañana, es urgente'."}
+Usuario: "marca como hecha la tarea de comprar leche"
+{"action":"complete_task","taskTitle":"Comprar leche","message":"✓ 'Comprar leche' marcada como completada"}
 
-Usuario: "agrega comprar 2 kg de papas para el mercado del sábado"
-{"action":"create_task","title":"Comprar 2 kg de papas","description":"Para el mercado del sábado","categoryId":"shopping","priority":"low","price":null,"message":"Agregado a compras: '2 kg de papas' para el sábado."}`;
+Usuario: "elimina la tarea del banco"
+{"action":"delete_task","taskTitle":"Llamar al banco","message":"🗑 'Llamar al banco' eliminada"}
+
+Usuario: "¿cuántas tareas tengo?"
+{"action":"chat","message":"Tienes ${tasks.length} tarea(s) en total."}`;
 
     const messages = [
       { role: 'system', content: systemPrompt },
@@ -91,7 +111,7 @@ Usuario: "agrega comprar 2 kg de papas para el mercado del sábado"
       body: JSON.stringify({
         model: MODEL,
         messages,
-        temperature: 0.3,
+        temperature: 0.2,
         response_format: { type: 'json_object' },
       }),
     });
@@ -108,11 +128,14 @@ Usuario: "agrega comprar 2 kg de papas para el mercado del sábado"
     try {
       parsed = JSON.parse(rawText);
     } catch {
-      return { reply: rawText };
+      return { action: 'chat', reply: rawText };
     }
 
-    if (parsed.action === 'create_task' && parsed.title) {
+    const action: AgentAction = parsed.action ?? 'chat';
+
+    if (action === 'create_task' && parsed.title) {
       return {
+        action,
         reply: parsed.message ?? `Listo, agregué "${parsed.title}" ✓`,
         taskCreated: {
           title: parsed.title,
@@ -125,6 +148,17 @@ Usuario: "agrega comprar 2 kg de papas para el mercado del sábado"
       };
     }
 
-    return { reply: parsed.message ?? parsed.reply ?? 'No entendí tu mensaje, intenta de nuevo.' };
+    if (action === 'complete_task' || action === 'delete_task') {
+      return {
+        action,
+        reply: parsed.message ?? '',
+        taskTitle: parsed.taskTitle ?? '',
+      };
+    }
+
+    return {
+      action,
+      reply: parsed.message ?? parsed.reply ?? 'No entendí tu mensaje, intenta de nuevo.',
+    };
   }
 }

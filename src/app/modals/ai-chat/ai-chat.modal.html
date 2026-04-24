@@ -7,7 +7,7 @@
         </div>
         <div>
           <p class="chat-title">Asistente IA</p>
-          <p class="chat-subtitle">Gemini 2.0 Flash</p>
+          <p class="chat-subtitle">Llama 3.3 70B</p>
         </div>
       </div>
       <button class="close-btn" (click)="dismiss()">
@@ -24,7 +24,35 @@
       class="message-wrapper"
       [class.user-wrapper]="msg.role === 'user'"
     >
-      <div class="bubble" [class.user-bubble]="msg.role === 'user'" [class.model-bubble]="msg.role === 'model'">
+      <div
+        class="bubble"
+        [class.user-bubble]="msg.role === 'user'"
+        [class.model-bubble]="msg.role === 'model'"
+        [class.bubble-created]="msg.type === 'create_task'"
+        [class.bubble-completed]="msg.type === 'complete_task'"
+        [class.bubble-deleted]="msg.type === 'delete_task'"
+        [class.bubble-clarification]="msg.type === 'ask_clarification'"
+      >
+        <ion-icon
+          *ngIf="msg.type === 'create_task'"
+          name="sparkles-outline"
+          class="bubble-icon"
+        ></ion-icon>
+        <ion-icon
+          *ngIf="msg.type === 'complete_task'"
+          name="checkmark-circle"
+          class="bubble-icon"
+        ></ion-icon>
+        <ion-icon
+          *ngIf="msg.type === 'delete_task'"
+          name="trash-outline"
+          class="bubble-icon"
+        ></ion-icon>
+        <ion-icon
+          *ngIf="msg.type === 'ask_clarification'"
+          name="help-circle-outline"
+          class="bubble-icon"
+        ></ion-icon>
         {{ msg.text }}
       </div>
     </div>
