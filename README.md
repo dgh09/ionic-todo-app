@@ -181,9 +181,14 @@ platforms/android/app/build/outputs/apk/debug/app-debug.apk
 
 ### Requisitos Android
 - Android Studio instalado
-- JDK 17+
+- JDK 17+ (si el sistema tiene JDK 11 como default, usar `JAVA_HOME` explícito)
 - Android SDK API 22+
 - Variable `ANDROID_HOME` configurada
+
+> Si Gradle falla con "JVM 17 required", prefija el comando con la ruta al JDK 17+:
+> ```bash
+> JAVA_HOME="C:/Program Files/Java/jdk-23" npm run cordova:build:android
+> ```
 
 ---
 
