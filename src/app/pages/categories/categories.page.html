@@ -13,7 +13,7 @@
 <ion-content [fullscreen]="true">
 
   <div class="cat-list" *ngIf="categories.length > 0; else emptyState">
-    <div class="cat-card" *ngFor="let cat of categories">
+    <div class="cat-card" *ngFor="let cat of categories; trackBy: trackByCategoryId">
 
       <div class="cat-icon-wrap" [style.background]="cat.color + '22'">
         <ion-icon [name]="cat.icon" [style.color]="cat.color"></ion-icon>
@@ -26,7 +26,7 @@
             <ion-icon name="cart"></ion-icon>
           </span>
         </div>
-        <p class="cat-count">{{ taskCountMap[cat.id] ?? 0 }} tarea(s)</p>
+        <p class="cat-count">{{ taskCountMap[cat.id] || 0 }} tarea(s)</p>
       </div>
 
       <div class="cat-actions">

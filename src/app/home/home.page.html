@@ -51,10 +51,11 @@
     <input
       class="search-input"
       [(ngModel)]="searchQuery"
+      (ngModelChange)="onSearchChange()"
       placeholder="Buscar tareas..."
       type="text"
     />
-    <button *ngIf="searchQuery" class="search-clear" (click)="searchQuery = ''">
+    <button *ngIf="searchQuery" class="search-clear" (click)="clearSearch()">
       <ion-icon name="close-circle"></ion-icon>
     </button>
   </div>
@@ -70,7 +71,7 @@
       <span>Todas</span>
     </button>
     <button
-      *ngFor="let cat of categories"
+      *ngFor="let cat of categories; trackBy: trackByCategoryId"
       class="category-pill"
       [class.active]="selectedCategory === cat.id"
       [style.--pill-color]="cat.color"
@@ -101,32 +102,32 @@
   </div>
 
   <!-- Budget Banner (solo en categorías de tipo shopping) -->
-  <div class="budget-banner" *ngIf="isShoppingView && budget.total > 0">
+  <div class="budget-banner" *ngIf="isShoppingView && budgetData.total > 0">
     <div class="budget-header">
       <ion-icon name="cart"></ion-icon>
       <span>Presupuesto estimado</span>
     </div>
-    <div class="budget-total">{{ formatCOP(budget.total) }}</div>
+    <div class="budget-total">{{ formatCOP(budgetData.total) }}</div>
     <div class="budget-row">
       <div class="budget-item">
         <span class="budget-dot spent"></span>
-        <span class="budget-value">{{ formatCOP(budget.spent) }}</span>
+        <span class="budget-value">{{ formatCOP(budgetData.spent) }}</span>
         <span class="budget-label">Comprado</span>
       </div>
       <div class="budget-divider"></div>
       <div class="budget-item">
         <span class="budget-dot pending"></span>
-        <span class="budget-value">{{ formatCOP(budget.pending) }}</span>
+        <span class="budget-value">{{ formatCOP(budgetData.pending) }}</span>
         <span class="budget-label">Pendiente</span>
       </div>
     </div>
   </div>
 
   <!-- Task Cards -->
-  <div class="task-list" *ngIf="filteredBySearch.length > 0; else emptyState">
+  <div class="task-list" *ngIf="filteredTasks.length > 0; else emptyState">
     <div
       class="task-card"
-      *ngFor="let task of filteredBySearch"
+      *ngFor="let task of filteredTasks; trackBy: trackByTaskId"
       [class.task-done]="task.completed"
       [style.--priority-color]="getPriorityHex(task.priority)"
     >

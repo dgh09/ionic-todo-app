@@ -256,6 +256,10 @@ npm run cordova:run:android        # Ejecuta en emulador/dispositivo Android
 
 - **Lazy loading de rutas** con `loadComponent` — cada página se descarga solo cuando el usuario navega a ella, reduciendo el bundle inicial.
 - **Standalone Components** — eliminan el overhead de NgModules y permiten tree-shaking más agresivo.
+- **`ChangeDetectionStrategy.OnPush`** en `HomePage` y `CategoriesPage` — Angular solo re-renderiza el componente cuando cambia un `@Input`, llega un evento o se llama `markForCheck()`, eliminando ciclos de detección innecesarios.
+- **`trackBy` en `*ngFor`** — Angular identifica cada tarjeta/categoría por su `id`; al actualizar la lista, reutiliza los nodos del DOM existentes en lugar de destruirlos y recrearlos.
+- **Map de categorías para lookup O(1)** — `getCategoryById` usa un `Map<string, Category>` reconstruido solo cuando cambia el array; evita `Array.find()` O(n) en cada render de cada tarea.
+- **Filtrado memoizado** — `filteredTasks` y `budgetData` se recalculan únicamente cuando cambian las tareas o la búsqueda (no en cada ciclo de change detection como hacían los getters anteriores).
 - **`onSnapshot` de Firestore** — actualización en tiempo real sin polling; Firestore sirve desde caché local offline cuando no hay conexión.
 - **`combineLatest` + `BehaviorSubject`** — el filtrado de tareas es puramente reactivo, sin iteraciones manuales ni re-renders innecesarios.
 - **`takeUntil(destroy$)`** — todas las subscripciones RxJS se limpian al destruir el componente para evitar memory leaks.

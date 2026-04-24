@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -30,6 +30,7 @@ import { AiChatModal } from '../modals/ai-chat/ai-chat.modal';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule, FormsModule, RouterLink,
     IonHeader, IonToolbar, IonContent, IonIcon,
@@ -37,6 +38,7 @@ import { AiChatModal } from '../modals/ai-chat/ai-chat.modal';
 })
 export class HomePage implements OnInit, OnDestroy {
   tasks: Task[] = [];
+  filteredTasks: Task[] = [];
   categories: Category[] = [];
   stats = { total: 0, completed: 0, active: 0 };
   selectedCategory: string | null = null;
@@ -45,7 +47,9 @@ export class HomePage implements OnInit, OnDestroy {
   showPriority = true;
   showStatsBanner = true;
   userName = '';
+  budgetData = { total: 0, spent: 0, pending: 0 };
 
+  private categoryMap = new Map<string, Category>();
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -57,6 +61,7 @@ export class HomePage implements OnInit, OnDestroy {
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
+    private cdr: ChangeDetectorRef,
   ) {
     addIcons({
       add, trashOutline, createOutline, gridOutline, checkmark,
@@ -72,6 +77,7 @@ export class HomePage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
         this.userName = user?.displayName || user?.email?.split('@')[0] || 'allí';
+        this.cdr.markForCheck();
       });
 
     this.taskService.filteredTasks$
@@ -79,19 +85,52 @@ export class HomePage implements OnInit, OnDestroy {
       .subscribe(tasks => {
         this.tasks = tasks;
         this.stats = this.taskService.getStats();
+        this.updateFiltered();
+        this.cdr.markForCheck();
       });
 
     this.categoryService.categories$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(cats => (this.categories = cats));
+      .subscribe(cats => {
+        this.categories = cats;
+        this.categoryMap = new Map(cats.map(c => [c.id, c]));
+        this.cdr.markForCheck();
+      });
 
     this.remoteConfig.flags$
       .pipe(takeUntil(this.destroy$))
       .subscribe(flags => {
         this.showPriority = flags['show_priority'] as boolean;
         this.showStatsBanner = flags['show_stats_banner'] as boolean;
+        this.cdr.markForCheck();
       });
   }
+
+  private updateFiltered(): void {
+    const q = this.searchQuery.trim().toLowerCase();
+    this.filteredTasks = q
+      ? this.tasks.filter(t =>
+          t.title.toLowerCase().includes(q) ||
+          (t.description ?? '').toLowerCase().includes(q)
+        )
+      : [...this.tasks];
+    const priced = this.filteredTasks.filter(t => (t.price ?? 0) > 0);
+    const total  = priced.reduce((s, t) => s + (t.price ?? 0), 0);
+    const spent  = priced.filter(t => t.completed).reduce((s, t) => s + (t.price ?? 0), 0);
+    this.budgetData = { total, spent, pending: total - spent };
+  }
+
+  onSearchChange(): void {
+    this.updateFiltered();
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.updateFiltered();
+  }
+
+  trackByTaskId(_: number, task: Task): string { return task.id; }
+  trackByCategoryId(_: number, cat: Category): string { return cat.id; }
 
   async logout(): Promise<void> {
     const alert = await this.alertCtrl.create({
@@ -118,20 +157,12 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   get selectedCategoryObj(): Category | undefined {
-    return this.categories.find(c => c.id === this.selectedCategory);
+    return this.selectedCategory ? this.categoryMap.get(this.selectedCategory) : undefined;
   }
 
   get isShoppingView(): boolean {
     const cat = this.selectedCategoryObj;
     return cat?.type === 'shopping' || cat?.id === 'shopping';
-  }
-
-  get budget(): { total: number; spent: number; pending: number } {
-    const priced = this.filteredBySearch.filter(t => t.price != null && t.price > 0);
-    const total   = priced.reduce((s, t) => s + (t.price ?? 0), 0);
-    const spent   = priced.filter(t => t.completed).reduce((s, t) => s + (t.price ?? 0), 0);
-    const pending = priced.filter(t => !t.completed).reduce((s, t) => s + (t.price ?? 0), 0);
-    return { total, spent, pending };
   }
 
   formatCOP(value: number | undefined | null): string {
@@ -141,23 +172,13 @@ export class HomePage implements OnInit, OnDestroy {
     }).format(value);
   }
 
-  get filteredBySearch(): Task[] {
-    if (!this.searchQuery.trim()) return this.tasks;
-    const q = this.searchQuery.toLowerCase();
-    return this.tasks.filter(t =>
-      t.title.toLowerCase().includes(q) ||
-      (t.description ?? '').toLowerCase().includes(q)
-    );
-  }
-
   get progress(): number {
     if (this.stats.total === 0) return 0;
     return this.stats.completed / this.stats.total;
   }
 
   getCategoryById(id: string | null): Category | undefined {
-    if (!id) return undefined;
-    return this.categories.find(c => c.id === id);
+    return id ? this.categoryMap.get(id) : undefined;
   }
 
   getPriorityHex(priority: string): string {

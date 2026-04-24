@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonHeader, IonToolbar, IonContent, IonIcon,
@@ -23,6 +23,7 @@ import { AddCategoryModal } from '../../modals/add-category/add-category.modal';
   templateUrl: './categories.page.html',
   styleUrls: ['./categories.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     IonHeader, IonToolbar, IonContent, IonIcon,
@@ -41,6 +42,7 @@ export class CategoriesPage implements OnInit, OnDestroy {
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {
     addIcons({
       add, trashOutline, createOutline, arrowBack, folderOpen,
@@ -52,7 +54,10 @@ export class CategoriesPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.categoryService.categories$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(cats => (this.categories = cats));
+      .subscribe(cats => {
+        this.categories = cats;
+        this.cdr.markForCheck();
+      });
 
     this.taskService.tasks$
       .pipe(takeUntil(this.destroy$))
@@ -63,8 +68,11 @@ export class CategoriesPage implements OnInit, OnDestroy {
             this.taskCountMap[t.categoryId] = (this.taskCountMap[t.categoryId] ?? 0) + 1;
           }
         });
+        this.cdr.markForCheck();
       });
   }
+
+  trackByCategoryId(_: number, cat: Category): string { return cat.id; }
 
   ngOnDestroy(): void {
     this.destroy$.next();
