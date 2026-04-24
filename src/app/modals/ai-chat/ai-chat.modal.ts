@@ -74,7 +74,6 @@ export class AiChatModal implements OnInit, OnDestroy {
       const result = await this.aiAgent.sendMessage(this.history, text, this.categories, this.tasks);
 
       this.history.push({ role: 'user', text });
-      this.history.push({ role: 'model', text: result.reply });
 
       switch (result.action) {
         case 'create_task':
@@ -86,6 +85,7 @@ export class AiChatModal implements OnInit, OnDestroy {
             completed: false,
             price: result.taskCreated!.price,
           });
+          this.history.push({ role: 'model', text: result.reply });
           this.messages.push({ role: 'model', text: result.reply, type: 'create_task' });
           break;
 
@@ -93,9 +93,12 @@ export class AiChatModal implements OnInit, OnDestroy {
           const task = this.findTaskByTitle(result.taskTitle ?? '');
           if (task) {
             this.taskService.toggle(task.id);
+            this.history.push({ role: 'model', text: result.reply });
             this.messages.push({ role: 'model', text: result.reply, type: 'complete_task' });
           } else {
-            this.messages.push({ role: 'model', text: `No encontré ninguna tarea con ese nombre en tu lista.`, type: 'chat' });
+            const errMsg = `No encontré ninguna tarea con ese nombre en tu lista.`;
+            this.history.push({ role: 'model', text: errMsg });
+            this.messages.push({ role: 'model', text: errMsg, type: 'chat' });
           }
           break;
         }
@@ -104,18 +107,23 @@ export class AiChatModal implements OnInit, OnDestroy {
           const task = this.findTaskByTitle(result.taskTitle ?? '');
           if (task) {
             this.taskService.delete(task.id);
+            this.history.push({ role: 'model', text: result.reply });
             this.messages.push({ role: 'model', text: result.reply, type: 'delete_task' });
           } else {
-            this.messages.push({ role: 'model', text: `No encontré ninguna tarea con ese nombre en tu lista.`, type: 'chat' });
+            const errMsg = `No encontré ninguna tarea con ese nombre en tu lista.`;
+            this.history.push({ role: 'model', text: errMsg });
+            this.messages.push({ role: 'model', text: errMsg, type: 'chat' });
           }
           break;
         }
 
         case 'ask_clarification':
+          this.history.push({ role: 'model', text: result.reply });
           this.messages.push({ role: 'model', text: result.reply, type: 'ask_clarification' });
           break;
 
         default:
+          this.history.push({ role: 'model', text: result.reply });
           this.messages.push({ role: 'model', text: result.reply, type: 'chat' });
       }
     } catch {

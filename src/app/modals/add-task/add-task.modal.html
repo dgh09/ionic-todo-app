@@ -38,7 +38,7 @@
         (click)="categoryId = null"
       >Sin categoría</button>
       <button
-        *ngFor="let cat of categories"
+        *ngFor="let cat of categories; trackBy: trackByCategoryId"
         class="atm-cat-pill"
         [class.atm-cat-active]="categoryId === cat.id"
         [style.--cat-color]="cat.color"

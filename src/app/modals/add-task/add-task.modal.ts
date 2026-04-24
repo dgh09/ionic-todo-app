@@ -28,6 +28,7 @@ export class AddTaskModal implements OnInit, OnDestroy {
   price: number | null = null;
   priceDisplay = '';
   categories: Category[] = [];
+  private categoryMap = new Map<string, Category>();
 
   private destroy$ = new Subject<void>();
 
@@ -41,7 +42,10 @@ export class AddTaskModal implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.categoryService.categories$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(cats => (this.categories = cats));
+      .subscribe(cats => {
+        this.categories = cats;
+        this.categoryMap = new Map(cats.map(c => [c.id, c]));
+      });
 
     if (this.task) {
       this.title       = this.task.title;
@@ -62,9 +66,11 @@ export class AddTaskModal implements OnInit, OnDestroy {
   }
 
   get isShoppingSelected(): boolean {
-    const cat = this.categories.find(c => c.id === this.categoryId);
+    const cat = this.categoryId ? this.categoryMap.get(this.categoryId) : undefined;
     return cat?.type === 'shopping' || cat?.id === 'shopping';
   }
+
+  trackByCategoryId(_: number, cat: Category): string { return cat.id; }
 
   formatCOP(value: number): string {
     return new Intl.NumberFormat('es-CO', {
