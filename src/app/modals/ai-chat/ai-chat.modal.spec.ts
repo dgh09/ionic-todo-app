@@ -53,7 +53,12 @@ function buildModal(tasks: Task[] = []) {
 
 // ─── Suite ────────────────────────────────────────────────────────────────────
 describe('AiChatModal', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => jest.useRealTimers());
 
   // ── Estado inicial ──────────────────────────────────────────────────────────
   describe('estado inicial', () => {
