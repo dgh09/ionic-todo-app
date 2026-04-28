@@ -1,6 +1,7 @@
+// ─── Mocks de módulos externos ────────────────────────────────────────────────
 jest.mock('@ionic/angular/standalone', () => ({
   IonContent: class IonContent {},
-  IonIcon: class IonIcon {},
+  IonIcon:    class IonIcon {},
   IonSpinner: class IonSpinner {},
 }));
 jest.mock('ionicons', () => ({ addIcons: jest.fn() }));
@@ -9,139 +10,179 @@ jest.mock('ionicons/icons', () => ({
   eyeOutline: null, eyeOffOutline: null, alertCircleOutline: null,
 }));
 
+// ─── Imports ──────────────────────────────────────────────────────────────────
 import { LoginPage } from './login.page';
 
-const mockAuthService = {
-  signIn: jest.fn(),
-  register: jest.fn(),
-};
+// ─── Stubs de dependencias ────────────────────────────────────────────────────
+const mockAuthService = { signIn: jest.fn(), register: jest.fn() };
+const mockRouter      = { navigate: jest.fn() };
 
-const mockRouter = {
-  navigate: jest.fn(),
-};
+// ─── Factory ──────────────────────────────────────────────────────────────────
+function buildPage() {
+  const page = new LoginPage(mockAuthService as any, mockRouter as any);
+  return { page };
+}
 
+// ─── Suite ────────────────────────────────────────────────────────────────────
 describe('LoginPage', () => {
-  let component: LoginPage;
+  beforeEach(() => jest.clearAllMocks());
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    component = new LoginPage(mockAuthService as any, mockRouter as any);
+  // ── Estado inicial ──────────────────────────────────────────────────────────
+  describe('estado inicial', () => {
+    it('mode empieza en login', () => {
+      const { page } = buildPage();
+      expect(page.mode).toBe('login');
+    });
+
+    it('errorMsg empieza vacío', () => {
+      const { page } = buildPage();
+      expect(page.errorMsg).toBe('');
+    });
+
+    it('loading empieza en false', () => {
+      const { page } = buildPage();
+      expect(page.loading).toBe(false);
+    });
   });
 
+  // ── setMode ─────────────────────────────────────────────────────────────────
   describe('setMode', () => {
     it('cambia el modo a register', () => {
-      component.setMode('register');
-      expect(component.mode).toBe('register');
+      const { page } = buildPage();
+      page.setMode('register');
+      expect(page.mode).toBe('register');
     });
 
-    it('limpia el errorMsg al cambiar de modo', () => {
-      component.errorMsg = 'Error previo';
-      component.setMode('login');
-      expect(component.errorMsg).toBe('');
+    it('limpia errorMsg al cambiar de modo', () => {
+      const { page } = buildPage();
+      page.errorMsg = 'Error previo';
+      page.setMode('login');
+      expect(page.errorMsg).toBe('');
     });
   });
 
+  // ── goBack ──────────────────────────────────────────────────────────────────
   describe('goBack', () => {
-    it('navega a la ruta raíz', () => {
-      component.goBack();
+    it('navega a la ruta raíz con replaceUrl', () => {
+      const { page } = buildPage();
+      page.goBack();
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/'], { replaceUrl: true });
     });
   });
 
+  // ── submit — validaciones ───────────────────────────────────────────────────
   describe('submit — validaciones', () => {
     it('muestra error si email está vacío', async () => {
-      component.email = '';
-      component.password = '123456';
-      await component.submit();
-      expect(component.errorMsg).toBe('Completa todos los campos.');
+      const { page } = buildPage();
+      page.email = '';
+      page.password = '123456';
+      await page.submit();
+      expect(page.errorMsg).toBe('Completa todos los campos.');
     });
 
-    it('muestra error si password está vacío', async () => {
-      component.email = 'test@test.com';
-      component.password = '';
-      await component.submit();
-      expect(component.errorMsg).toBe('Completa todos los campos.');
+    it('muestra error si password está vacía', async () => {
+      const { page } = buildPage();
+      page.email = 'test@test.com';
+      page.password = '';
+      await page.submit();
+      expect(page.errorMsg).toBe('Completa todos los campos.');
     });
 
-    it('muestra error si email no es válido', async () => {
-      component.email = 'no-es-un-email';
-      component.password = '123456';
-      await component.submit();
-      expect(component.errorMsg).toBe('Ingresa un correo válido.');
+    it('muestra error si el email no tiene formato válido', async () => {
+      const { page } = buildPage();
+      page.email = 'no-es-un-email';
+      page.password = '123456';
+      await page.submit();
+      expect(page.errorMsg).toBe('Ingresa un correo válido.');
     });
 
     it('muestra error si en register el nombre está vacío', async () => {
-      component.setMode('register');
-      component.email = 'test@test.com';
-      component.password = '123456';
-      component.name = '';
-      await component.submit();
-      expect(component.errorMsg).toBe('Ingresa tu nombre.');
+      const { page } = buildPage();
+      page.setMode('register');
+      page.email = 'test@test.com';
+      page.password = '123456';
+      page.name = '';
+      await page.submit();
+      expect(page.errorMsg).toBe('Ingresa tu nombre.');
     });
 
     it('muestra error si en register la contraseña tiene menos de 6 caracteres', async () => {
-      component.setMode('register');
-      component.email = 'test@test.com';
-      component.password = '123';
-      component.name = 'Juan';
-      await component.submit();
-      expect(component.errorMsg).toBe('La contraseña debe tener al menos 6 caracteres.');
+      const { page } = buildPage();
+      page.setMode('register');
+      page.email = 'test@test.com';
+      page.password = '123';
+      page.name = 'Juan';
+      await page.submit();
+      expect(page.errorMsg).toBe('La contraseña debe tener al menos 6 caracteres.');
     });
   });
 
+  // ── submit — login exitoso ──────────────────────────────────────────────────
   describe('submit — login exitoso', () => {
     beforeEach(() => {
-      component.email = 'test@test.com';
-      component.password = '123456';
       mockAuthService.signIn.mockResolvedValue({});
     });
 
     it('llama a authService.signIn con email y password', async () => {
-      await component.submit();
+      const { page } = buildPage();
+      page.email = 'test@test.com';
+      page.password = '123456';
+      await page.submit();
       expect(mockAuthService.signIn).toHaveBeenCalledWith('test@test.com', '123456');
     });
 
-    it('navega a /home tras login exitoso', async () => {
-      await component.submit();
+    it('navega a /home con replaceUrl tras login exitoso', async () => {
+      const { page } = buildPage();
+      page.email = 'test@test.com';
+      page.password = '123456';
+      await page.submit();
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/home'], { replaceUrl: true });
     });
 
-    it('loading vuelve a false tras completar', async () => {
-      await component.submit();
-      expect(component.loading).toBe(false);
+    it('loading vuelve a false al terminar', async () => {
+      const { page } = buildPage();
+      page.email = 'test@test.com';
+      page.password = '123456';
+      await page.submit();
+      expect(page.loading).toBe(false);
     });
   });
 
+  // ── submit — registro exitoso ───────────────────────────────────────────────
   describe('submit — registro exitoso', () => {
     beforeEach(() => {
-      component.setMode('register');
-      component.email = 'nuevo@test.com';
-      component.password = '123456';
-      component.name = 'María';
       mockAuthService.register.mockResolvedValue({});
     });
 
-    it('llama a authService.register con los datos correctos', async () => {
-      await component.submit();
+    it('llama a authService.register con email, password y nombre', async () => {
+      const { page } = buildPage();
+      page.setMode('register');
+      page.email = 'nuevo@test.com';
+      page.password = '123456';
+      page.name = 'María';
+      await page.submit();
       expect(mockAuthService.register).toHaveBeenCalledWith('nuevo@test.com', '123456', 'María');
     });
   });
 
-  describe('submit — error de Firebase', () => {
+  // ── submit — errores de Firebase ────────────────────────────────────────────
+  describe('submit — errores de Firebase', () => {
     it('muestra mensaje amigable para credenciales incorrectas', async () => {
-      component.email = 'test@test.com';
-      component.password = '123456';
+      const { page } = buildPage();
+      page.email = 'test@test.com';
+      page.password = '123456';
       mockAuthService.signIn.mockRejectedValue({ code: 'auth/invalid-credential' });
-      await component.submit();
-      expect(component.errorMsg).toBe('Correo o contraseña incorrectos.');
+      await page.submit();
+      expect(page.errorMsg).toBe('Correo o contraseña incorrectos.');
     });
 
     it('muestra mensaje genérico para errores desconocidos', async () => {
-      component.email = 'test@test.com';
-      component.password = '123456';
+      const { page } = buildPage();
+      page.email = 'test@test.com';
+      page.password = '123456';
       mockAuthService.signIn.mockRejectedValue({ code: 'auth/unknown-error' });
-      await component.submit();
-      expect(component.errorMsg).toBe('Ocurrió un error. Intenta de nuevo.');
+      await page.submit();
+      expect(page.errorMsg).toBe('Ocurrió un error. Intenta de nuevo.');
     });
   });
 });
