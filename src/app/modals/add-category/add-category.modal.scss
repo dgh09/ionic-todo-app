@@ -1,27 +1,24 @@
 ion-modal app-add-category-modal ion-content {
-  --background: #ffffff;
+  --background: var(--app-surface);
 }
 
-/* ── CONTENEDOR ─────────────────────────────── */
 .acm-wrap {
   padding: 14px 20px 36px;
   display: flex;
   flex-direction: column;
   gap: 18px;
-  background: #fff;
+  background: var(--app-surface);
   min-height: 100%;
 }
 
-/* ── HANDLE ─────────────────────────────────── */
 .acm-handle {
   width: 36px;
   height: 4px;
-  background: #E0E1EA;
-  border-radius: 99px;
+  background: var(--app-border);
+  border-radius: var(--app-radius-full);
   margin: 0 auto;
 }
 
-/* ── CABECERA ───────────────────────────────── */
 .acm-header {
   display: flex;
   align-items: center;
@@ -29,9 +26,9 @@ ion-modal app-add-category-modal ion-content {
 }
 
 .acm-title {
-  font-size: 20px;
+  font-size: var(--app-text-xl);
   font-weight: 800;
-  color: #1A1A2E;
+  color: var(--app-text);
   margin: 0;
   letter-spacing: -0.3px;
 }
@@ -39,33 +36,32 @@ ion-modal app-add-category-modal ion-content {
 .acm-close {
   width: 34px;
   height: 34px;
-  border-radius: 10px;
-  background: #F0F1F7;
+  border-radius: var(--app-radius-xs);
+  background: var(--app-surface-light);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #A0A3B1;
+  color: var(--app-text-muted);
   font-size: 18px;
 
-  &:active { background: #dddee8; }
+  &:active { background: var(--app-surface-secondary); }
 }
 
-/* ── PREVIEW ────────────────────────────────── */
 .acm-preview {
   display: flex;
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
-  border-radius: 16px;
+  border-radius: var(--app-radius-md);
   border: 1.5px solid;
 }
 
 .acm-preview-icon {
   width: 46px;
   height: 46px;
-  border-radius: 14px;
+  border-radius: var(--app-radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,8 +70,8 @@ ion-modal app-add-category-modal ion-content {
 }
 
 .acm-preview-name {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: var(--app-text-lg);
+  font-weight: var(--app-font-bold);
   flex: 1;
 }
 
@@ -84,27 +80,26 @@ ion-modal app-add-category-modal ion-content {
   align-items: center;
   gap: 4px;
   background: rgba(0,0,0,0.08);
-  border-radius: 8px;
+  border-radius: var(--app-radius-xs);
   padding: 4px 8px;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--app-text-xs);
+  font-weight: var(--app-font-semibold);
   color: inherit;
   flex-shrink: 0;
 
   ion-icon { font-size: 12px; }
 }
 
-/* ── INPUT NOMBRE ───────────────────────────── */
 .acm-field {
-  background: #F4F5FB;
-  border-radius: 14px;
+  background: var(--app-bg);
+  border-radius: var(--app-radius-sm);
   padding: 2px 16px;
   border: 1.5px solid transparent;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color var(--app-transition), background var(--app-transition);
 
   &:focus-within {
-    background: #fff;
-    border-color: #6C63FF;
+    background: var(--app-surface);
+    border-color: var(--app-primary);
   }
 }
 
@@ -114,25 +109,23 @@ ion-modal app-add-category-modal ion-content {
   outline: none;
   background: transparent;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: #1A1A2E;
+  font-size: var(--app-text-lg);
+  font-weight: var(--app-font-semibold);
+  color: var(--app-text);
   padding: 14px 0;
 
-  &::placeholder { color: #B0B3C1; }
+  &::placeholder { color: var(--app-placeholder); }
 }
 
-/* ── LABEL DE SECCIÓN ───────────────────────── */
 .acm-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: #B0B3C1;
+  font-size: var(--app-text-xs);
+  font-weight: var(--app-font-bold);
+  color: var(--app-placeholder);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: -6px;
 }
 
-/* ── COLORES ────────────────────────────────── */
 .acm-colors {
   display: flex;
   gap: 10px;
@@ -149,8 +142,8 @@ ion-modal app-add-category-modal ion-content {
   justify-content: center;
   cursor: pointer;
   font-size: 16px;
-  color: #fff;
-  transition: transform 0.15s;
+  color: var(--app-surface);
+  transition: transform var(--app-transition);
   flex-shrink: 0;
 
   &.acm-color-active {
@@ -161,60 +154,58 @@ ion-modal app-add-category-modal ion-content {
   &:active { transform: scale(0.9); }
 }
 
-/* ── ÍCONOS ─────────────────────────────────── */
 .acm-icons {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+  gap: var(--app-space-2);
 }
 
 .acm-icon-btn {
   aspect-ratio: 1;
-  border-radius: 12px;
-  border: 1.5px solid #E8E9F0;
-  background: #F4F5FB;
+  border-radius: var(--app-radius-sm);
+  border: 1.5px solid var(--app-border);
+  background: var(--app-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 22px;
-  color: #A0A3B1;
+  color: var(--app-text-muted);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all var(--app-transition);
 
   &.acm-icon-active {
-    background: var(--icon-color, #6C63FF);
-    border-color: var(--icon-color, #6C63FF);
-    color: #fff;
+    background: var(--icon-color, var(--app-primary));
+    border-color: var(--icon-color, var(--app-primary));
+    color: var(--app-surface);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
 
   &:active { transform: scale(0.92); }
 }
 
-/* ── TOGGLE COMPRAS ─────────────────────────── */
 .acm-toggle-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: #F4F5FB;
-  border-radius: 16px;
+  background: var(--app-bg);
+  border-radius: var(--app-radius-md);
   padding: 14px 16px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background var(--app-transition);
 
-  &:active { background: #EAEBF5; }
+  &:active { background: var(--app-surface-secondary); }
 }
 
 .acm-toggle-icon {
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--app-radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
-  transition: background 0.2s;
+  transition: background var(--app-transition);
 }
 
 .acm-toggle-info {
@@ -225,21 +216,21 @@ ion-modal app-add-category-modal ion-content {
 }
 
 .acm-toggle-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1A1A2E;
+  font-size: var(--app-text-md);
+  font-weight: var(--app-font-bold);
+  color: var(--app-text);
 }
 
 .acm-toggle-sub {
-  font-size: 12px;
-  color: #B0B3C1;
+  font-size: var(--app-text-xs);
+  color: var(--app-placeholder);
 }
 
 .acm-switch {
   width: 44px;
   height: 26px;
-  border-radius: 99px;
-  background: #D0D1E0;
+  border-radius: var(--app-radius-full);
+  background: var(--app-border);
   display: flex;
   align-items: center;
   padding: 3px;
@@ -247,7 +238,7 @@ ion-modal app-add-category-modal ion-content {
   flex-shrink: 0;
 
   &.acm-switch-on {
-    background: #2dd36f;
+    background: var(--app-success);
 
     .acm-switch-thumb {
       transform: translateX(18px);
@@ -259,29 +250,28 @@ ion-modal app-add-category-modal ion-content {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--app-surface);
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   transition: transform 0.25s;
 }
 
-/* ── BOTÓN CREAR ────────────────────────────── */
 .acm-submit {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--app-space-2);
   width: 100%;
   padding: 16px;
-  border-radius: 16px;
+  border-radius: var(--app-radius-md);
   border: none;
-  background: linear-gradient(135deg, #6C63FF 0%, #9b8fff 100%);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 700;
+  background: linear-gradient(135deg, var(--app-primary) 0%, var(--app-primary-tint) 100%);
+  color: var(--app-surface);
+  font-size: var(--app-text-lg);
+  font-weight: var(--app-font-bold);
   font-family: inherit;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(108, 99, 255, 0.35);
-  transition: transform 0.15s, opacity 0.15s;
+  transition: transform var(--app-transition), opacity var(--app-transition);
   margin-top: 4px;
 
   ion-icon { font-size: 20px; }

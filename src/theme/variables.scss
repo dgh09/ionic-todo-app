@@ -1,5 +1,5 @@
+/* ─── Ionic system colors ─────────────────────────────────────────────────── */
 :root {
-  /* Paleta principal */
   --ion-color-primary: #6C63FF;
   --ion-color-primary-rgb: 108, 99, 255;
   --ion-color-primary-contrast: #ffffff;
@@ -60,7 +60,6 @@
   --ion-color-dark-shade: #171728;
   --ion-color-dark-tint: #313143;
 
-  /* Fondos y textos */
   --ion-background-color: #F4F5FB;
   --ion-background-color-rgb: 244, 245, 251;
   --ion-text-color: #1A1A2E;
@@ -68,11 +67,97 @@
 
   --ion-item-background: transparent;
   --ion-card-background: #ffffff;
-
   --ion-toolbar-background: #F4F5FB;
   --ion-toolbar-color: #1A1A2E;
 
-  /* Custom vars */
-  --app-border-radius: 16px;
-  --app-card-shadow: 0 2px 12px rgba(108, 99, 255, 0.08);
+  /* ─── App design tokens ───────────────────────────────────────────────────── */
+
+  /* Colors */
+  --app-primary:          #6C63FF;
+  --app-primary-tint:     #9b8fff;
+  --app-primary-light:    #EAE9FF;
+  --app-secondary:        #FF6584;
+  --app-tertiary:         #43C6AC;
+  --app-tertiary-alt:     #48cfad;
+  --app-success:          #2EC27E;
+  --app-success-dark:     #1a7f5a;
+  --app-success-light:    #a8ffd4;
+  --app-warning:          #F5A623;
+  --app-warning-light:    #ffe4a0;
+  --app-danger:           #FF4757;
+  --app-danger-alt:       #eb445a;
+  --app-bg:               #F4F5FB;
+  --app-bg-dark:          #0D0D1A;
+  --app-surface:          #ffffff;
+  --app-surface-light:    #F0F1F7;
+  --app-surface-secondary:#EAEBF5;
+  --app-text:             #1A1A2E;
+  --app-text-muted:       #A0A3B1;
+  --app-placeholder:      #B0B3C1;
+  --app-border:           #E8E9F0;
+
+  /* Border radius */
+  --app-radius-xs:  6px;
+  --app-radius-sm:  10px;
+  --app-radius-md:  16px;
+  --app-radius-lg:  20px;
+  --app-radius-xl:  28px;
+  --app-radius-full: 9999px;
+
+  /* Shadows */
+  --app-shadow-sm:  0 1px 4px rgba(108, 99, 255, 0.06);
+  --app-shadow-md:  0 2px 12px rgba(108, 99, 255, 0.10);
+  --app-shadow-lg:  0 8px 24px rgba(108, 99, 255, 0.14);
+
+  /* Font sizes */
+  --app-text-xs:   11px;
+  --app-text-sm:   13px;
+  --app-text-md:   15px;
+  --app-text-lg:   17px;
+  --app-text-xl:   20px;
+  --app-text-2xl:  24px;
+  --app-text-3xl:  30px;
+
+  /* Font weights */
+  --app-font-normal:   400;
+  --app-font-medium:   500;
+  --app-font-semibold: 600;
+  --app-font-bold:     700;
+
+  /* Spacing */
+  --app-space-1:  4px;
+  --app-space-2:  8px;
+  --app-space-3:  12px;
+  --app-space-4:  16px;
+  --app-space-5:  20px;
+  --app-space-6:  24px;
+  --app-space-8:  32px;
+  --app-space-10: 40px;
+
+  /* Transitions */
+  --app-transition: 200ms ease;
+  --app-transition-slow: 350ms ease;
+
+  /* Dark theme — texto y superficies sobre --app-bg-dark */
+  --app-on-dark:         rgba(255, 255, 255, 1.00);
+  --app-on-dark-strong:  rgba(255, 255, 255, 0.70);
+  --app-on-dark-medium:  rgba(255, 255, 255, 0.50);
+  --app-on-dark-muted:   rgba(255, 255, 255, 0.40);
+  --app-on-dark-faint:   rgba(255, 255, 255, 0.35);
+  --app-on-dark-subtle:  rgba(255, 255, 255, 0.25);
+  --app-on-dark-ghost:   rgba(255, 255, 255, 0.20);
+  --app-on-dark-surface: rgba(255, 255, 255, 0.06);
+  --app-on-dark-border:  rgba(255, 255, 255, 0.10);
+  --app-on-dark-hover:   rgba(255, 255, 255, 0.12);
+
+  /* Primary con opacidad — focus, sombras, overlays */
+  --app-primary-focus-border: rgba(108, 99, 255, 0.50);
+  --app-primary-focus-bg:     rgba(108, 99, 255, 0.06);
+  --app-primary-shadow-sm:    rgba(108, 99, 255, 0.25);
+  --app-primary-shadow-md:    rgba(108, 99, 255, 0.35);
+  --app-primary-shadow-lg:    rgba(108, 99, 255, 0.45);
+
+  /* Danger con opacidad — banners de error */
+  --app-danger-bg-subtle:     rgba(255, 71, 87, 0.12);
+  --app-danger-border-subtle: rgba(255, 71, 87, 0.25);
 }

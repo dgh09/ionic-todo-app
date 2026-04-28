@@ -1,8 +1,7 @@
 ion-content {
-  --background: #0D0D1A;
+  --background: var(--app-bg-dark);
 }
 
-/* ── CONTENEDOR ─────────────────────────────── */
 .onboarding {
   height: 100%;
   display: flex;
@@ -14,7 +13,6 @@ ion-content {
   position: relative;
 }
 
-/* ── FONDO ───────────────────────────────────── */
 .bg {
   position: absolute;
   inset: 0;
@@ -30,24 +28,23 @@ ion-content {
 
 .b1 {
   width: 300px; height: 300px;
-  background: #6C63FF;
+  background: var(--app-primary);
   opacity: 0.25;
   top: -100px; left: -80px;
 }
 .b2 {
   width: 220px; height: 220px;
-  background: #FF6584;
+  background: var(--app-secondary);
   opacity: 0.15;
   top: 60px; right: -60px;
 }
 .b3 {
   width: 200px; height: 200px;
-  background: #43C6AC;
+  background: var(--app-tertiary);
   opacity: 0.12;
   bottom: 80px; left: 20%;
 }
 
-/* ── SLIDES ──────────────────────────────────── */
 .slides {
   display: flex;
   width: 300vw;
@@ -68,7 +65,6 @@ ion-content {
   gap: 12px;
 }
 
-/* ── VISUAL ──────────────────────────────────── */
 .slide-visual {
   margin-bottom: 8px;
 }
@@ -87,34 +83,33 @@ ion-content {
 
   ion-icon {
     font-size: 52px;
-    color: #9b8fff;
+    color: var(--app-primary-tint);
   }
 
   &.teal {
     background: linear-gradient(135deg, rgba(67,198,172,0.2), rgba(67,198,172,0.06));
     border-color: rgba(67,198,172,0.3);
     box-shadow: 0 0 60px rgba(67,198,172,0.15);
-    ion-icon { color: #43C6AC; }
+    ion-icon { color: var(--app-tertiary); }
   }
 
   &.pink {
     background: linear-gradient(135deg, rgba(255,101,132,0.2), rgba(255,101,132,0.06));
     border-color: rgba(255,101,132,0.3);
     box-shadow: 0 0 60px rgba(255,101,132,0.15);
-    ion-icon { color: #FF6584; }
+    ion-icon { color: var(--app-secondary); }
   }
 }
 
-/* ── TEXTOS ──────────────────────────────────── */
 .app-logo {
-  font-size: 28px;
+  font-size: var(--app-text-2xl);
   font-weight: 900;
-  color: rgba(255,255,255,0.3);
+  color: var(--app-on-dark-subtle);
   letter-spacing: -1px;
   margin: 0;
 
   span {
-    background: linear-gradient(135deg, #6C63FF, #FF6584);
+    background: linear-gradient(135deg, var(--app-primary), var(--app-secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -124,47 +119,45 @@ ion-content {
 .slide-title {
   font-size: 26px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--app-surface);
   letter-spacing: -0.5px;
   line-height: 1.2;
   margin: 0;
 }
 
 .slide-desc {
-  font-size: 15px;
-  color: rgba(255,255,255,0.5);
+  font-size: var(--app-text-md);
+  color: var(--app-on-dark-medium);
   line-height: 1.6;
   margin: 0;
   max-width: 280px;
 }
 
-/* ── DOTS ────────────────────────────────────── */
 .dots {
   display: flex;
-  gap: 8px;
+  gap: var(--app-space-2);
   margin: 24px 0;
 }
 
 .dot {
   width: 8px;
   height: 8px;
-  border-radius: 99px;
-  background: rgba(255,255,255,0.2);
+  border-radius: var(--app-radius-full);
+  background: var(--app-on-dark-ghost);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--app-transition-slow);
 
   &.active {
     width: 24px;
-    background: #6C63FF;
+    background: var(--app-primary);
   }
 }
 
-/* ── BOTONES ─────────────────────────────────── */
 .actions {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: var(--app-space-3);
   width: 100%;
   padding: 0 32px;
   box-sizing: border-box;
@@ -174,38 +167,38 @@ ion-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--app-space-2);
   width: 100%;
   padding: 17px 24px;
   border-radius: 18px;
   border: none;
-  background: linear-gradient(135deg, #6C63FF, #9b8fff);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 700;
+  background: linear-gradient(135deg, var(--app-primary), var(--app-primary-tint));
+  color: var(--app-surface);
+  font-size: var(--app-text-lg);
+  font-weight: var(--app-font-bold);
   font-family: inherit;
   cursor: pointer;
   box-shadow: 0 8px 28px rgba(108,99,255,0.45);
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform var(--app-transition), box-shadow var(--app-transition);
 
   ion-icon { font-size: 18px; }
 
   &:active {
     transform: scale(0.96);
-    box-shadow: 0 4px 14px rgba(108,99,255,0.3);
+    box-shadow: var(--app-shadow-lg);
   }
 }
 
 .btn-ghost {
   background: none;
   border: none;
-  color: rgba(255,255,255,0.4);
-  font-size: 14px;
-  font-weight: 600;
+  color: var(--app-on-dark-muted);
+  font-size: var(--app-text-md);
+  font-weight: var(--app-font-semibold);
   font-family: inherit;
   cursor: pointer;
-  padding: 8px;
-  transition: color 0.2s;
+  padding: var(--app-space-2);
+  transition: color var(--app-transition);
 
   &:active { color: rgba(255,255,255,0.7); }
 }

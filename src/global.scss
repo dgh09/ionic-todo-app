@@ -1,41 +1,69 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
-/* Core CSS required for Ionic components to work properly */
+/* ─── Ionic core ──────────────────────────────────────────────────────────── */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+/* ─── Tailwind v4 — solo utilities, sin preflight para no chocar con Ionic ── */
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+/* ─── Design tokens → clases Tailwind ────────────────────────────────────── */
+@theme {
+  /* Colors */
+  --color-primary:       var(--app-primary);
+  --color-primary-light: var(--app-primary-light);
+  --color-secondary:     var(--app-secondary);
+  --color-tertiary:      var(--app-tertiary);
+  --color-success:       var(--app-success);
+  --color-warning:       var(--app-warning);
+  --color-danger:        var(--app-danger);
+  --color-bg:            var(--app-bg);
+  --color-surface:       var(--app-surface);
+  --color-app-text:      var(--app-text);
+  --color-muted:         var(--app-text-muted);
+  --color-border:        var(--app-border);
 
+  /* Border radius */
+  --radius-xs:   var(--app-radius-xs);
+  --radius-sm:   var(--app-radius-sm);
+  --radius-md:   var(--app-radius-md);
+  --radius-lg:   var(--app-radius-lg);
+  --radius-xl:   var(--app-radius-xl);
+  --radius-full: var(--app-radius-full);
+
+  /* Shadows */
+  --shadow-sm: var(--app-shadow-sm);
+  --shadow-md: var(--app-shadow-md);
+  --shadow-lg: var(--app-shadow-lg);
+
+  /* Font sizes */
+  --text-xs:   var(--app-text-xs);
+  --text-sm:   var(--app-text-sm);
+  --text-md:   var(--app-text-md);
+  --text-lg:   var(--app-text-lg);
+  --text-xl:   var(--app-text-xl);
+  --text-2xl:  var(--app-text-2xl);
+  --text-3xl:  var(--app-text-3xl);
+
+  /* Spacing */
+  --spacing-1:  var(--app-space-1);
+  --spacing-2:  var(--app-space-2);
+  --spacing-3:  var(--app-space-3);
+  --spacing-4:  var(--app-space-4);
+  --spacing-5:  var(--app-space-5);
+  --spacing-6:  var(--app-space-6);
+  --spacing-8:  var(--app-space-8);
+  --spacing-10: var(--app-space-10);
+}
+
+/* ─── Ionic overrides ─────────────────────────────────────────────────────── */
 * {
   -webkit-tap-highlight-color: transparent;
 }
@@ -44,10 +72,10 @@ ion-content {
   --background: #F4F5FB;
 }
 
-@import './app/modals/add-category/add-category.modal';
-
 ion-toolbar {
   --background: #F4F5FB;
   --border-width: 0 !important;
   box-shadow: none !important;
 }
+
+@import './app/modals/add-category/add-category.modal';

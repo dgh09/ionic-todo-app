@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 // Default feature flags (used as fallback if Firebase is not configured)
 const DEFAULTS: Record<string, boolean | string | number> = {
@@ -21,7 +22,7 @@ export class RemoteConfigService {
       const { getRemoteConfig, fetchAndActivate, getValue } = await import('firebase/remote-config');
       this.remoteConfig = getRemoteConfig(app);
       this.remoteConfig.settings = {
-        minimumFetchIntervalMillis: 3600000, // 1 hour in prod
+        minimumFetchIntervalMillis: environment.production ? 3600000 : 0,
         fetchTimeoutMillis: 10000,
       };
       this.remoteConfig.defaultConfig = DEFAULTS;

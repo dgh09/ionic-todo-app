@@ -1,6 +1,6 @@
 /* ── HEADER ─────────────────────────────────── */
 ion-toolbar {
-  --background: var(--ion-background-color);
+  --background: var(--app-bg);
   --border-width: 0;
   --min-height: 80px;
   padding: 0;
@@ -14,17 +14,17 @@ ion-toolbar {
 }
 
 .header-greeting {
-  font-size: 13px;
-  color: var(--ion-color-medium);
+  font-size: var(--app-text-sm);
+  color: var(--app-text-muted);
   margin: 0 0 4px;
-  font-weight: 500;
+  font-weight: var(--app-font-medium);
   letter-spacing: 0.2px;
 }
 
 .header-title {
-  font-size: 30px;
+  font-size: var(--app-text-3xl);
   font-weight: 800;
-  color: var(--ion-color-dark);
+  color: var(--app-text);
   margin: 0;
   letter-spacing: -0.8px;
   line-height: 1.1;
@@ -33,23 +33,23 @@ ion-toolbar {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--app-space-2);
 }
 
 .header-settings-btn {
   width: 42px;
   height: 42px;
-  border-radius: 14px;
-  background: #fff;
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  box-shadow: var(--app-shadow-sm);
   cursor: pointer;
-  color: var(--ion-color-dark);
-  font-size: 20px;
-  transition: transform 0.15s;
+  color: var(--app-text);
+  font-size: var(--app-text-xl);
+  transition: transform var(--app-transition);
 
   &:active { transform: scale(0.92); }
 }
@@ -57,17 +57,17 @@ ion-toolbar {
 .header-logout-btn {
   width: 42px;
   height: 42px;
-  border-radius: 14px;
+  border-radius: var(--app-radius-sm);
   background: #fff0f0;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  box-shadow: var(--app-shadow-sm);
   cursor: pointer;
-  color: #eb445a;
-  font-size: 20px;
-  transition: transform 0.15s;
+  color: var(--app-danger-alt);
+  font-size: var(--app-text-xl);
+  transition: transform var(--app-transition);
 
   &:active { transform: scale(0.92); }
 }
@@ -75,10 +75,10 @@ ion-toolbar {
 /* ── STATS BANNER ───────────────────────────── */
 .stats-banner {
   margin: 12px 16px;
-  background: linear-gradient(135deg, #6C63FF 0%, #9b8fff 100%);
-  border-radius: 20px;
+  background: linear-gradient(135deg, var(--app-primary) 0%, var(--app-primary-tint) 100%);
+  border-radius: var(--app-radius-xl);
   padding: 18px 20px 14px;
-  color: #fff;
+  color: var(--app-surface);
   box-shadow: 0 8px 24px rgba(108, 99, 255, 0.3);
 }
 
@@ -98,16 +98,16 @@ ion-toolbar {
   .stat-value {
     font-size: 26px;
     font-weight: 800;
-    color: #fff;
+    color: var(--app-surface);
 
-    &.success { color: #a8ffd4; }
-    &.warning { color: #ffe4a0; }
+    &.success { color: var(--app-success-light); }
+    &.warning { color: var(--app-warning-light); }
   }
 
   .stat-label {
-    font-size: 11px;
+    font-size: var(--app-text-xs);
     color: rgba(255,255,255,0.75);
-    font-weight: 500;
+    font-weight: var(--app-font-medium);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -129,20 +129,20 @@ ion-toolbar {
   flex: 1;
   height: 6px;
   background: rgba(255,255,255,0.25);
-  border-radius: 99px;
+  border-radius: var(--app-radius-full);
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: #fff;
-  border-radius: 99px;
+  background: var(--app-surface);
+  border-radius: var(--app-radius-full);
   transition: width 0.4s ease;
 }
 
 .progress-label {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--app-text-sm);
+  font-weight: var(--app-font-bold);
   color: rgba(255,255,255,0.9);
   min-width: 32px;
   text-align: right;
@@ -153,15 +153,15 @@ ion-toolbar {
   display: flex;
   align-items: center;
   margin: 8px 16px 12px;
-  background: #fff;
-  border-radius: 14px;
+  background: var(--app-surface);
+  border-radius: var(--app-radius-sm);
   padding: 10px 14px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  box-shadow: var(--app-shadow-sm);
   gap: 10px;
 
   .search-icon {
     font-size: 18px;
-    color: var(--ion-color-medium);
+    color: var(--app-text-muted);
     flex-shrink: 0;
   }
 
@@ -169,19 +169,19 @@ ion-toolbar {
     flex: 1;
     border: none;
     outline: none;
-    font-size: 15px;
-    color: var(--ion-color-dark);
+    font-size: var(--app-text-md);
+    color: var(--app-text);
     background: transparent;
     font-family: inherit;
 
-    &::placeholder { color: var(--ion-color-medium); }
+    &::placeholder { color: var(--app-text-muted); }
   }
 
   .search-clear {
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--ion-color-medium);
+    color: var(--app-text-muted);
     font-size: 18px;
     padding: 0;
     display: flex;
@@ -191,7 +191,7 @@ ion-toolbar {
 /* ── CATEGORY PILLS ─────────────────────────── */
 .category-scroll {
   display: flex;
-  gap: 8px;
+  gap: var(--app-space-2);
   padding: 0 16px 12px;
   overflow-x: auto;
   scrollbar-width: none;
@@ -203,24 +203,24 @@ ion-toolbar {
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  border-radius: 99px;
-  border: 1.5px solid #e8e9f0;
-  background: #fff;
-  color: var(--ion-color-medium);
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: var(--app-radius-full);
+  border: 1.5px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text-muted);
+  font-size: var(--app-text-sm);
+  font-weight: var(--app-font-semibold);
   font-family: inherit;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--app-transition);
   flex-shrink: 0;
 
   ion-icon { font-size: 15px; }
 
   &.active {
-    background: var(--pill-color, var(--ion-color-primary));
-    border-color: var(--pill-color, var(--ion-color-primary));
-    color: #fff;
+    background: var(--pill-color, var(--app-primary));
+    border-color: var(--pill-color, var(--app-primary));
+    color: var(--app-surface);
     box-shadow: 0 4px 12px rgba(108, 99, 255, 0.25);
   }
 
@@ -231,28 +231,28 @@ ion-toolbar {
 .status-tabs {
   display: flex;
   margin: 0 16px 16px;
-  background: #fff;
-  border-radius: 12px;
+  background: var(--app-surface);
+  border-radius: var(--app-radius-sm);
   padding: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: var(--app-shadow-sm);
 }
 
 .status-tab {
   flex: 1;
   border: none;
   background: transparent;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--app-text-sm);
+  font-weight: var(--app-font-semibold);
   font-family: inherit;
-  color: var(--ion-color-medium);
+  color: var(--app-text-muted);
   padding: 8px 4px;
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--app-transition);
 
   &.active {
-    background: var(--ion-color-primary);
-    color: #fff;
+    background: var(--app-primary);
+    color: var(--app-surface);
     box-shadow: 0 2px 8px rgba(108, 99, 255, 0.3);
   }
 }
@@ -260,10 +260,10 @@ ion-toolbar {
 /* ── BUDGET BANNER ──────────────────────────── */
 .budget-banner {
   margin: 0 16px 16px;
-  background: linear-gradient(135deg, #1a7f5a 0%, #2dd36f 100%);
-  border-radius: 20px;
+  background: linear-gradient(135deg, var(--app-success-dark) 0%, var(--app-success) 100%);
+  border-radius: var(--app-radius-xl);
   padding: 16px 20px;
-  color: #fff;
+  color: var(--app-surface);
   box-shadow: 0 8px 24px rgba(45, 211, 111, 0.3);
 }
 
@@ -271,8 +271,8 @@ ion-toolbar {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--app-text-xs);
+  font-weight: var(--app-font-semibold);
   text-transform: uppercase;
   letter-spacing: 0.8px;
   color: rgba(255,255,255,0.8);
@@ -282,9 +282,9 @@ ion-toolbar {
 }
 
 .budget-total {
-  font-size: 30px;
+  font-size: var(--app-text-3xl);
   font-weight: 800;
-  color: #fff;
+  color: var(--app-surface);
   letter-spacing: -0.5px;
   margin-bottom: 14px;
 }
@@ -294,14 +294,14 @@ ion-toolbar {
   align-items: center;
   gap: 16px;
   background: rgba(0,0,0,0.12);
-  border-radius: 12px;
+  border-radius: var(--app-radius-sm);
   padding: 10px 16px;
 }
 
 .budget-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--app-space-2);
   flex: 1;
 }
 
@@ -311,18 +311,18 @@ ion-toolbar {
   border-radius: 50%;
   flex-shrink: 0;
 
-  &.spent   { background: #a8ffd4; }
-  &.pending { background: #ffe4a0; }
+  &.spent   { background: var(--app-success-light); }
+  &.pending { background: var(--app-warning-light); }
 }
 
 .budget-value {
-  font-size: 14px;
-  font-weight: 700;
-  color: #fff;
+  font-size: var(--app-text-md);
+  font-weight: var(--app-font-bold);
+  color: var(--app-surface);
 }
 
 .budget-label {
-  font-size: 11px;
+  font-size: var(--app-text-xs);
   color: rgba(255,255,255,0.7);
 }
 
@@ -343,18 +343,15 @@ ion-toolbar {
 .task-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: #fff;
-  border-radius: 16px;
+  gap: var(--app-space-3);
+  background: var(--app-surface);
+  border-radius: var(--app-radius-md);
   padding: 14px 14px 14px 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-  border-left: 4px solid var(--priority-color, #e8e9f0);
-  transition: transform 0.15s, opacity 0.2s;
+  box-shadow: var(--app-shadow-md);
+  border-left: 4px solid var(--priority-color, var(--app-border));
+  transition: transform var(--app-transition), opacity var(--app-transition);
 
-  &.task-done {
-    opacity: 0.55;
-  }
-
+  &.task-done { opacity: 0.55; }
   &:active { transform: scale(0.985); }
 }
 
@@ -370,17 +367,17 @@ ion-toolbar {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  border: 2px solid #d0d1e0;
+  border: 2px solid var(--app-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all var(--app-transition);
   font-size: 14px;
-  color: #fff;
+  color: var(--app-surface);
 
   &.checked {
-    background: var(--ion-color-success);
-    border-color: var(--ion-color-success);
+    background: var(--app-success);
+    border-color: var(--app-success);
     box-shadow: 0 2px 8px rgba(46, 194, 126, 0.35);
   }
 }
@@ -392,9 +389,9 @@ ion-toolbar {
 }
 
 .task-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ion-color-dark);
+  font-size: var(--app-text-md);
+  font-weight: var(--app-font-semibold);
+  color: var(--app-text);
   margin: 0 0 3px;
   white-space: nowrap;
   overflow: hidden;
@@ -402,13 +399,13 @@ ion-toolbar {
 
   &.done-text {
     text-decoration: line-through;
-    color: var(--ion-color-medium);
+    color: var(--app-text-muted);
   }
 }
 
 .task-desc {
-  font-size: 12px;
-  color: var(--ion-color-medium);
+  font-size: var(--app-text-xs);
+  color: var(--app-text-muted);
   margin: 0 0 6px;
   white-space: nowrap;
   overflow: hidden;
@@ -426,37 +423,37 @@ ion-toolbar {
   align-items: center;
   gap: 3px;
   padding: 3px 8px;
-  border-radius: 99px;
-  font-size: 11px;
-  font-weight: 600;
+  border-radius: var(--app-radius-full);
+  font-size: var(--app-text-xs);
+  font-weight: var(--app-font-semibold);
 
   ion-icon { font-size: 11px; }
 }
 
 .priority-tag {
-  &.priority-high   { background: #ffe0e3; color: #FF4757; }
-  &.priority-medium { background: #fff3d6; color: #F5A623; }
-  &.priority-low    { background: #d6f5e6; color: #2EC27E; }
+  &.priority-high   { background: #ffe0e3; color: var(--app-danger); }
+  &.priority-medium { background: #fff3d6; color: var(--app-warning); }
+  &.priority-low    { background: #d6f5e6; color: var(--app-success); }
 }
 
 .price-tag {
   background: #e8faf1;
-  color: #1a7f5a;
-  font-weight: 700;
+  color: var(--app-success-dark);
+  font-weight: var(--app-font-bold);
 }
 
 .task-delete {
   flex-shrink: 0;
   background: none;
   border: none;
-  color: #d0d1e0;
+  color: var(--app-border);
   font-size: 18px;
   cursor: pointer;
   padding: 4px;
   display: flex;
-  transition: color 0.2s;
+  transition: color var(--app-transition);
 
-  &:active { color: var(--ion-color-danger); }
+  &:active { color: var(--app-danger); }
 }
 
 /* ── EMPTY STATE ────────────────────────────── */
@@ -470,8 +467,8 @@ ion-toolbar {
   .empty-illustration {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, #6C63FF22, #9b8fff22);
-    border-radius: 24px;
+    background: linear-gradient(135deg, #{rgba(#6C63FF, 0.13)}, #{rgba(#9b8fff, 0.13)});
+    border-radius: var(--app-radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -479,20 +476,20 @@ ion-toolbar {
 
     ion-icon {
       font-size: 38px;
-      color: var(--ion-color-primary);
+      color: var(--app-primary);
     }
   }
 
   h3 {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--ion-color-dark);
+    font-size: var(--app-text-xl);
+    font-weight: var(--app-font-bold);
+    color: var(--app-text);
     margin: 0 0 8px;
   }
 
   p {
-    font-size: 14px;
-    color: var(--ion-color-medium);
+    font-size: var(--app-text-md);
+    color: var(--app-text-muted);
     line-height: 1.5;
     margin: 0;
   }
@@ -506,7 +503,7 @@ ion-toolbar {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 12px;
+  gap: var(--app-space-3);
   z-index: 999;
 }
 
@@ -514,28 +511,28 @@ ion-toolbar {
   width: 58px;
   height: 58px;
   border-radius: 18px;
-  background: linear-gradient(135deg, #6C63FF, #9b8fff);
+  background: linear-gradient(135deg, var(--app-primary), var(--app-primary-tint));
   border: none;
-  color: #fff;
+  color: var(--app-surface);
   font-size: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 8px 24px rgba(108, 99, 255, 0.45);
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform var(--app-transition), box-shadow var(--app-transition);
 
   &:active {
     transform: scale(0.92);
-    box-shadow: 0 4px 12px rgba(108, 99, 255, 0.35);
+    box-shadow: var(--app-shadow-lg);
   }
 
   &.fab-ai {
     width: 48px;
     height: 48px;
     font-size: 22px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #48cfad, #6c63ff);
+    border-radius: var(--app-radius-sm);
+    background: linear-gradient(135deg, var(--app-tertiary-alt), var(--app-primary));
     box-shadow: 0 6px 18px rgba(72, 207, 173, 0.4);
   }
 }
