@@ -23,7 +23,8 @@
       "dom"
     ],
     "skipLibCheck": true,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "types": ["jest"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
